@@ -6,9 +6,15 @@ class Club():
         self.nom = nom
         self.entraineur = entraineur
         self.joueurs = []
+        self.score = 0
+        self.note = 0
 
     def __str__(self):
         return f"{self.nom}"
+
+    def remplissage(self, liste):
+        for j in liste:
+            self.joueurs.append(j)
 
     def liste_joueurs(self):
         """
@@ -21,11 +27,20 @@ class Club():
 
     def note_club(self):
         cpt = 0
-        note = 0
+        self.note = 0
         if len(self.joueurs) != 0:
             for j in self.joueurs:
-                note += j.note
+                self.note += j.note
                 cpt += 1
-            print(f"La note du club {self.nom} est : {note/cpt:.1f}")
+            print(f"La note du club {self.nom} est : {self.note/cpt:.1f}")
         else:
             print(f"Il n'y a aucun joueur dans le club {self.nom}")
+
+    def victoire(self):
+        self.score += 2
+
+    def nul(self):
+        self.score += 1
+
+    def affichage_score(self):
+        print(f"{self.nom} à un score de {self.score}")

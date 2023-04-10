@@ -1,4 +1,3 @@
-import Club
 
 
 class Joueur():
@@ -51,22 +50,3 @@ class Defenseur(Joueur):
     def __str__(self):
         return f"{self.nom}, {self.poste} ({self.note}) | {self.club}"
 
-
-lefoot = Club.Club("lefoot", "Didier")
-oui = Club.Club("oui", "Marcel")
-J1 = Attaquant("Bob", 95, lefoot)
-J2 = Gardien("Jean Claude", 20, lefoot)
-J3 = Milieu("Micheline", 32, lefoot)
-print(J1)
-print(J2)
-print(J3)
-print(J1.note)
-print(J3.poste)
-print(J2.nom)
-print(lefoot.nom, lefoot.entraineur)
-lefoot.joueurs.append(J1)
-lefoot.joueurs.append(J2)
-lefoot.joueurs.append(J3)
-#lefoot.liste_joueurs()
-lefoot.note_club()
-oui.note_club()
