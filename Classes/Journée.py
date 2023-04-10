@@ -26,7 +26,7 @@ class Journee():
                 c1.ajout_match_realise(c2)
                 c2.ajout_match_realise(c1)
                 match_realise = True
-                c1.note_club()
+                c1.note_club()  # On affiche les notes des clubs juste pour vérifier
                 c2.note_club()
                 if c1.note > c2.note:
                     print(f"{c1} remporte le match contre {c2} !")
@@ -46,6 +46,9 @@ class Journee():
             print(f"{c} termine la journée {self.num} avec un score de {c.score}")
 
     def deroulement(self):
+        """
+        Fonction simulant le déroulement d'une journée
+        """
         while len(self.clubs) > 0:
             self.match()
         self.score_journee()

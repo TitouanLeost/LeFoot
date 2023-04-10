@@ -14,6 +14,11 @@ class Club():
         return f"{self.nom}"
 
     def remplissage(self, liste):
+        """
+        Méthode permettant le remplissage du club avec des joueurs.
+
+        liste : liste des joueurs à ajouter au club
+        """
         for j in liste:
             self.joueurs.append(j)
 
@@ -27,8 +32,11 @@ class Club():
         print(f"L'entraineur est {self.entraineur}")
 
     def note_club(self):
+        """
+        Méthode permettant le calcul de la note du club
+        """
         cpt = 0
-        self.note = 0
+        self.note = 0  # On remet la note à 0 pour être sûr
         if len(self.joueurs) != 0:
             for j in self.joueurs:
                 self.note += j.note

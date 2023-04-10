@@ -4,7 +4,6 @@ class Joueur():
     """
     Classe renseignant toutes les informations propres à un joueur
     """
-
     def __init__(self, nom, note, club):
         self.nom = nom
         self.note = note
@@ -12,7 +11,6 @@ class Joueur():
 
 
 class Gardien(Joueur):
-
     def __init__(self, nom, note, club):
         super().__init__(nom, note, club)
         self.poste = "Gardien"
@@ -22,7 +20,6 @@ class Gardien(Joueur):
 
 
 class Attaquant(Joueur):
-
     def __init__(self, nom, note, club):
         super().__init__(nom, note, club)
         self.poste = "Attaquant"
@@ -32,7 +29,6 @@ class Attaquant(Joueur):
 
 
 class Milieu(Joueur):
-
     def __init__(self, nom, note, club):
         super().__init__(nom, note, club)
         self.poste = "Milieu"
@@ -42,7 +38,6 @@ class Milieu(Joueur):
 
 
 class Defenseur(Joueur):
-
     def __init__(self, nom, note, club):
         super().__init__(nom, note, club)
         self.poste = "Defenseur"
