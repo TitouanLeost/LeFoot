@@ -8,6 +8,7 @@ class Club():
         self.joueurs = []
         self.score = 0
         self.note = 0
+        self.match_realise = []
 
     def __str__(self):
         return f"{self.nom}"
@@ -44,3 +45,6 @@ class Club():
 
     def affichage_score(self):
         print(f"{self.nom} à un score de {self.score}")
+
+    def ajout_match_realise(self, club):
+        self.match_realise.append(club)
