@@ -1,14 +1,15 @@
 import Club
 
+
 class Joueur():
     """
     Classe renseignant toutes les informations propres à un joueur
     """
+
     def __init__(self, nom, note, club):
         self.nom = nom
         self.note = note
         self.club = club
-
 
 
 class Gardien(Joueur):
@@ -21,7 +22,6 @@ class Gardien(Joueur):
         return f"{self.nom}, {self.poste} ({self.note}) | {self.club}"
 
 
-
 class Attaquant(Joueur):
 
     def __init__(self, nom, note, club):
@@ -30,7 +30,6 @@ class Attaquant(Joueur):
 
     def __str__(self):
         return f"{self.nom}, {self.poste} ({self.note}) | {self.club}"
-
 
 
 class Milieu(Joueur):
@@ -43,7 +42,6 @@ class Milieu(Joueur):
         return f"{self.nom}, {self.poste} ({self.note}) | {self.club}"
 
 
-
 class Defenseur(Joueur):
 
     def __init__(self, nom, note, club):
@@ -54,8 +52,8 @@ class Defenseur(Joueur):
         return f"{self.nom}, {self.poste} ({self.note}) | {self.club}"
 
 
-
 lefoot = Club.Club("lefoot", "Didier")
+oui = Club.Club("oui", "Marcel")
 J1 = Attaquant("Bob", 95, lefoot)
 J2 = Gardien("Jean Claude", 20, lefoot)
 J3 = Milieu("Micheline", 32, lefoot)
@@ -66,3 +64,9 @@ print(J1.note)
 print(J3.poste)
 print(J2.nom)
 print(lefoot.nom, lefoot.entraineur)
+lefoot.joueurs.append(J1)
+lefoot.joueurs.append(J2)
+lefoot.joueurs.append(J3)
+#lefoot.liste_joueurs()
+lefoot.note_club()
+oui.note_club()
