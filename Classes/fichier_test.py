@@ -158,11 +158,5 @@ print("-----------------------------------")
 
 ligue1 = Championnat.Championnat("ligue 1")
 ligue1.remplissage([sb, sr, se, gu, fs, cc, sc, rl])
-# ligue1.nb_journees()
-# print(ligue1.journees)
 
-j1 = Journée.Journee(1, ligue1)
-j1.deroulement()
-
-j2 = Journée.Journee(2, ligue1)
-j2.deroulement()
+ligue1.simuler()
