@@ -20,7 +20,7 @@ class Journee():
         match_realise = False
         i = 0
         while match_realise == False:
-            c2 = self.clubs[0]
+            c2 = self.clubs[i]
             if c2 not in c1.match_realise:  # On vérifie que c1 et c2 ne se sont pas encore rencontrés
                 del self.clubs[i]
                 c1.ajout_match_realise(c2)
