@@ -2,6 +2,7 @@ from Joueur import *
 import Club
 import Journée
 import Championnat
+import unittest
 
 
 sb = Club.Club("Stade Brestois 29", "Philippe")
