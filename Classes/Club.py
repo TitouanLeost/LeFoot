@@ -27,19 +27,39 @@ class Club():
             self.joueurs.append(j)
 
 
-    def liste_joueurs(self):
+    def liste_joueurs(self, fichier):
         """
-        Méthode permettant l'affichage de la composition du club.
+        Méthode permettant l'enregistrement de la composition du club dans un fichier.
+
+        fichier : fichier où enregistrer les données pour les afficher.
         """
-        print(f"Le club {self.nom} dispose des joueurs suivants :")
+        fichier.write(f"Le club {self.nom} dispose des joueurs suivants :\n")
         for j in self.joueurs:
-            print(j)
-        print(f"L'entraineur est {self.entraineur}")
+            fichier.write(f"{j}\n")
+        fichier.write(f"L'entraineur est {self.entraineur}\n")
+
+
+    def calcul_note_club_log(self, fichier):
+        """
+        Méthode permettant le calcul de la note du club et son enregistrement dans un fichier.
+
+        fichier : fichier où enregistrer les données pour les afficher.
+        """
+        cpt = 0
+        self.note_club = 0  # On remet la note à 0 pour être sûr
+        if len(self.joueurs) != 0:
+            for j in self.joueurs:
+                self.note_club += j.note
+                cpt += 1
+            self.note_club = self.note_club/cpt
+            fichier.write(f"La note du club {self.nom} est : {self.note_club:.1f}\n")
+        else:
+            fichier.write(f"Il n'y a aucun joueur dans le club {self.nom}\n")
 
 
     def calcul_note_club(self):
         """
-        Méthode permettant le calcul de la note du club
+        Méthode permettant le calcul de la note du club.
         """
         cpt = 0
         self.note_club = 0  # On remet la note à 0 pour être sûr
@@ -76,3 +96,12 @@ class Club():
             self.match_realise_dom.append(club)
         elif e == "ext":
             self.match_realise_ext.append(club)
+
+    def fiche_club(self):
+        """
+        Fonction enregistrant les données du club (joueurs, entraineur, nom et note du club).
+        """
+        fichier_club = open(f"C:\WorkspacePython\LeFoot\Fichiers\\fiche de {self.nom}", 'wt')
+        self.liste_joueurs(fichier_club)
+        self.calcul_note_club_log(fichier_club)
+        fichier_club.close()

@@ -1,5 +1,6 @@
 import Journée
 import numpy as np
+
 class Championnat():
     """
     Classe définissant le championnat
@@ -43,10 +44,14 @@ class Championnat():
         Fonction permettant d'afficher le tableau des scores en fin de championnat.
         """
         # Affichage personnalisé pour le gagnant
+        fichier_score = open("C:\WorkspacePython\LeFoot\Fichiers\\fichier des scores finaux", 'wt')
         c = self.liste_scores[0]
         print(f"{c} remporte {self.nom} avec {c.score} points et {c.nb_buts} buts marqués !")
+        fichier_score.write(f"{c} remporte {self.nom} avec {c.score} points et {c.nb_buts} buts marqués !\n")
         for c in self.liste_scores[1::]:  # On parcourt la liste privée du gagnant
             print(f"{c} fini le championnat avec {c.score} points et {c.nb_buts} buts marqués.")
+            fichier_score.write(f"{c} fini le championnat avec {c.score} points et {c.nb_buts} buts marqués.\n")
+        fichier_score.close()
 
 
     def score_final(self):
@@ -65,3 +70,7 @@ class Championnat():
         Fonction permettant le triage des clubs en fonction de leur score puis de leur nombre de buts.
         """
         return club.score, club.nb_buts
+
+    def creation_fiche_clubs(self):
+        for c in self.clubs:
+            c.fiche_club()
