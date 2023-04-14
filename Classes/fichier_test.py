@@ -142,4 +142,5 @@ print("-----------------------------------")
 ligue1 = Championnat.Championnat("ligue 1")
 ligue1.remplissage([sb, sr, se, gu, fs, cc, sc, rl])
 ligue1.simuler()
+print("bonjour")
 
