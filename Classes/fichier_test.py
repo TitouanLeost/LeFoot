@@ -9,7 +9,7 @@ sr = Club.Club("Stade Rennais FC", "Catherine")
 se = Club.Club("AS Saint-Etienne", "Etienne")
 gu = Club.Club("En Avant Guingamp", "Joel")
 fs = Club.Club("FC Silmi", "Félix")
-cc = Club.Club("Cagliaro Calcio", "Charlie")
+cc = Club.Club("Cagliari Calcio", "Charlie")
 sc = Club.Club("SM Caen", "Jacob")
 rl = Club.Club("RC Lens", "Simone")
 
