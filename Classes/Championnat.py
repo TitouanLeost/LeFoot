@@ -1,12 +1,14 @@
 import Journée
 import numpy as np
 
+
 class Championnat():
     """
     Classe définissant le championnat
     """
-    def __init__(self, nom):
+    def __init__(self, nom, liste_clubs):
         self.nom = nom
+        self.liste_clubs = liste_clubs
         self.clubs = []
         self.journees = 14
         self.liste_scores = []
@@ -15,13 +17,14 @@ class Championnat():
         return f"{self.nom}"
 
 
-    def remplissage(self, liste):
+    def remplissage(self):
         """
         Méthode permettant le remplissage du championnat avec les clubs participant.
 
         liste : liste des clubs participants
         """
-        for c in liste:
+        for c in self.liste_clubs:
+            c.remplissage_BDD()
             self.clubs.append(c)
 
 

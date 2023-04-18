@@ -1,3 +1,7 @@
+import sqlite3
+import random as rd
+from Joueur import *
+
 class Club():
     """
     Classe gérant les informations relatives au club.
@@ -25,6 +29,41 @@ class Club():
         """
         for j in liste:
             self.joueurs.append(j)
+
+
+    def remplissage_BDD(self):
+        """
+        Méthode permettant le remplissage des effectifs du club à partir de la BDD reserve_joueurs.
+        """
+        con = sqlite3.connect("C:\WorkspacePython\LeFoot\BDD\BDD_joueurs.db")  # Mise en place de la connexion avec la database.
+        cur = con.cursor()  # Création du curseur.
+        # Création de listes aléatoires contenant les futurs attaquants, défenseurs, milieux et gardiens du club.
+        attaquant = cur.execute("SELECT * FROM reserve_joueurs WHERE poste == 'Attaquant' ORDER BY random() LIMIT 3")
+        at = attaquant.fetchall()
+        defenseur = cur.execute("SELECT * FROM reserve_joueurs WHERE poste == 'Défenseur' ORDER BY random() LIMIT 3")
+        de = defenseur.fetchall()
+        milieu = cur.execute("SELECT * FROM reserve_joueurs WHERE poste == 'Milieu' ORDER BY random() LIMIT 4")
+        mi = milieu.fetchall()
+        gardien = cur.execute("SELECT * FROM reserve_joueurs WHERE poste == 'Gardien' ORDER BY random() LIMIT 1")
+        ga = gardien.fetchall()
+        # Ajout des joueurs précédemment sélectionnés dans les effectifs du club.
+        # On retire ensuite les joueurs sélectionnés de la BDD.
+        for j in at:
+            joueur = Attaquant(j[2], j[4], self.nom)
+            self.joueurs.append(joueur)
+            cur.execute("DELETE FROM reserve_joueurs WHERE id == (?)", [j[0]])
+        for j in de:
+            joueur = Defenseur(j[2], j[4], self.nom)
+            self.joueurs.append(joueur)
+            cur.execute("DELETE FROM reserve_joueurs WHERE id == (?)", [j[0]])
+        for j in mi:
+            joueur = Milieu(j[2], j[4], self.nom)
+            self.joueurs.append(joueur)
+            cur.execute("DELETE FROM reserve_joueurs WHERE id == (?)", [j[0]])
+        for j in ga:
+            joueur = Gardien(j[2], j[4], self.nom)
+            self.joueurs.append(joueur)
+            cur.execute("DELETE FROM reserve_joueurs WHERE id == (?)", [j[0]])
 
 
     def liste_joueurs(self, fichier):
