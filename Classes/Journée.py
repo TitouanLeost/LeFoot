@@ -1,4 +1,3 @@
-import numpy as np
 import random as rd
 
 class Journee():
@@ -11,10 +10,8 @@ class Journee():
         self.clubs_complet = championnat.clubs.copy()  # liste contenant tous les clubs participant au championnat
         self.clubs = championnat.clubs.copy()  # Liste contenant les clubs n'ayant pas encore joué sur la journée
 
-
     def __str__(self):
         return f"Journée n°{self.num}"
-
 
     def match(self):
         """
@@ -38,7 +35,7 @@ class Journee():
         print(l1_s, l2_s, l3_s, l4_s)  # Debug
 
         # On cherche le club qui affrontera c1.
-        while match_realise == False:
+        while not match_realise:
             c2 = self.clubs[i]
             if c2 not in c1.match_realise_dom:  # On vérifie que c1 n'a pas accueilli c2 à domicile
                 del self.clubs[i]
@@ -62,12 +59,12 @@ class Journee():
         # On affiche les notes des clubs juste pour vérifier (Debug).
         c1.calcul_note_club()
         c2.calcul_note_club()
-        diff_note = c1.note_club - c2.note_club  # On calcul l'écart de note entre les clubs
+        diff_note = c1.note_club - c2.note_club  # On calcule l'écart de note entre les clubs
         print(diff_note)  # Debug
         # On détermine le nb d'actions qu'auront chaques clubs en fonction de tirages aléatoires, de la différence
         # et du caractère à domicile ou à l'extérieur de la rencontre.
-        nb_act_c1 = l1_s[0] + round(diff_note * l3_s[0] * 0.1) + dom_c1 * rd.randint(0,2)
-        nb_act_c2 = l2_s[0] - round(diff_note * l4_s[0] * 0.1) + dom_c2 * rd.randint(0,2)
+        nb_act_c1 = max(l1_s[0] + round(diff_note * l3_s[0] * 0.1) + dom_c1 * rd.randint(0,2), 0)
+        nb_act_c2 = max(l2_s[0] - round(diff_note * l4_s[0] * 0.1) + dom_c2 * rd.randint(0,2), 0)
         print(f"{c1} va avoir {nb_act_c1} actions.")
         print(f"{c2} va avoir {nb_act_c2} actions.")
         #print(f"dom_c1 = {dom_c1}")  # Debug
@@ -106,7 +103,6 @@ class Journee():
             print(f"{c1} et {c2} font un match nul avec {but_c1} partout.")
             print("----------------------------------------------------------------------------")
 
-
     def action(self, c1, c2, dom_c1, dom_c2):
         """
         Fonction qui simule une action de c1 contre c2
@@ -120,12 +116,12 @@ class Journee():
         note_def = 0
         # On détermine la note d'attaque de c1 et celle de défense de c2.
         # Les milieux participent au calcul des deux notes, mais avec un poids moindre.
-        for j in c1.joueurs:
+        for j in c1:
             if j.poste == "Attaquant":
                 note_att += j.note
             elif j.poste == "Milieu":
                 note_att += 0.5*j.note
-        for j in c2.joueurs:
+        for j in c2:
             if j.poste == "Défenseur":
                 note_def += j.note
             elif j.poste == "Milieu":
@@ -145,12 +141,12 @@ class Journee():
             print(f"--> {c1} perce la défense de {c2}")
             # On choisit un joueur au hasard pour effectuer le tir final.
             i = rd.randint(0,10)
-            j = c1.joueurs[i]
-            gardien = c2.joueurs[3]  # On sélectionne le gardien de l'équipe en défense
+            j = c1[i]
+            gardien = c2[-1]  # On sélectionne le gardien de l'équipe en défense
             # Tant que le joueur sélectionné n'est pas un attaquant, on en sélectionne un autre.
             while j.poste != "Attaquant":
                 i = rd.randint(0,10)
-                j = c1.joueurs[i]
+                j = c1[i]
             # On détermine les notes de frappes et d'arrêt en fonction des notes de l'attaquant et du gardien ainsi
             # que de la ferveur des supporters (domicile/extérieur).
             note_frappe = j.note * rd.random() + dom_c1 * 10
@@ -161,18 +157,19 @@ class Journee():
 
             # On détermine l'issue du tir.
             if note_frappe > note_arret:
-                print(f"===> {j.nom} marque un but pour {c1} !")
+                print(f"===> {j.prenom[0]}.{j.nom} marque un but pour {c1} !")
                 print("- - - - - - - -")
+                j.but()
                 return 1
             else:
-                print(f"===> {gardien.nom} arrête le tir de {j.nom}")
+                print(f"===> {gardien.prenom[0]}.{gardien.nom} arrête le tir de {j.prenom[0]}.{j.nom}")
                 print("- - - - - - - -")
+                gardien.arret()
                 return 0
 
         else:
             print(f"--> La défense de {c2} parvient à repousser l'offensive de {c1}")
             print("- - - - - - - -")
-
 
     def score_journee(self):
         """
@@ -180,7 +177,6 @@ class Journee():
         """
         for c in self.clubs_complet:
             print(f"{c} termine la journée {self.num} avec un score de {c.score}")
-
 
     def deroulement(self):
         """
