@@ -8,7 +8,7 @@ def creation_bdd():
     Fonction permettant la création de la BDD contenant les joueurs participant au championnat.
     Deux tables sont crées:
     joueurs permet de sauvegarder les joueurs du championnat
-    reserve_joueurs permet de remplir les effectifs des clubs. A la fin du remplissage, reserve_joueurs est vide.
+    reserve_joueurs permet de remplir les effectifs des clubs. À la fin du remplissage, reserve_joueurs est vide.
     """
     con = sqlite3.connect("C:\WorkspacePython\LeFoot\BDD\BDD_joueurs.db")  # Mise en place d'une connexion
     cur = con.cursor()  # Création du curseur
