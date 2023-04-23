@@ -1,8 +1,9 @@
+import unittest
 from Joueur import *
 import Club
 import Journée
-import Championnat
-import unittest
+import Championnat as Ch
+
 
 
 sb = Club.Club("Stade Brestois 29", "Philippe")
@@ -117,10 +118,17 @@ rl.remplissage([A22,A23,A24,G8,D22,D23,D24,M29,M30,M31,M32])
 
 
 
-ligue1 = Championnat.Championnat("ligue 1")
+'''ligue1 = Championnat.Championnat("ligue 1")
 ligue1.remplissage([sb, sr, se, gu, fs, cc, sc, rl])
 ligue1.creation_fiche_clubs()
-ligue1.simuler()
+ligue1.simuler()'''
 
 
 
+class TestJournee(unittest.TestCase):
+    def test_j(self):
+        club = Ch.Championnat("ligue1")
+        self.assertIsInstance(club.clubs, list) # on regardre si c'est bien une liste
+
+if __name__ == '__main__':
+    unittest.main()

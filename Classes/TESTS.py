@@ -121,7 +121,7 @@ class TestChampionnat(unittest.TestCase):
         self.assertIsInstance(c.clubs, list) # on regardre si c'est bien une liste
         self.assertEqual(c.journees, 14) # on regarde si il y a bien 14 journées (toutes les équipes se rencontrent 2 fois
 
-    def test_dom_ext(self):
+    def test_dom_ext(self): # il faut remplir le championnat
         club = Cl.Club("Stade Brestois 29", "Philippe")
         dom = 0
         ext = 0
@@ -134,7 +134,7 @@ class TestChampionnat(unittest.TestCase):
 
 
 class TestJournee(unittest.TestCase):
-    def test_resultat(self):
+    def test_resultat(self): # il faut remplir le championnat
         champ = Ch.Championnat("ligue1")
         max_but = champ.liste_scores[0] # problème car la liste n'est pas encore remplis. Je sais pas où on récupére les buts
         for i in range (7):
@@ -142,10 +142,15 @@ class TestJournee(unittest.TestCase):
                 max_but = champ.liste_scores[i]
         self.assertTrue(max_but<8) # on regarde si le score est réaliste (pas plus de 8 buts pour une équipe)
 
+    def test_score(self):
+
+
+    def test_points(self):
+        
 
 
 
-class TestClub(unittest.TestCase):
+class TestClub(unittest.TestCase): # il faut remplir le championnat
     def test_note(self):
         noteC = Cl.Club("Stade Brestois 29", "Philippe")
         self.assertTrue(noteC.note_club<85 and noteC.note_club>55) #on regarde si les notes des clubs sont réalistes (ni trop élevée, ni trop faible)
