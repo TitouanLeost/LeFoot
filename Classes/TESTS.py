@@ -1,8 +1,9 @@
+import unittest
 import Club as Cl
 import Journée as J
 import Championnat as Ch
 from Joueur import *
-import unittest
+
 
 sb = Cl.Club("Stade Brestois 29", "Philippe")
 sr = Cl.Club("Stade Rennais FC", "Catherine")
@@ -114,28 +115,40 @@ cc.remplissage([A16,A17,A18,G6,D16,D17,D18,M21,M22,M23,M24])
 sc.remplissage([A19,A20,A21,G7,D19,D20,D21,M25,M26,M27,M28])
 rl.remplissage([A22,A23,A24,G8,D22,D23,D24,M29,M30,M31,M32])
 
+class TestChampionnat(unittest.TestCase):
+    def test_var(self):
+        c = Ch.Championnat("ligue1")
+        self.assertIsInstance(c.clubs, list) # on regardre si c'est bien une liste
+        self.assertEqual(c.journees, 14) # on regarde si il y a bien 14 journées (toutes les équipes se rencontrent 2 fois
+
+    def test_dom_ext(self):
+        club = Cl.Club("Stade Brestois 29", "Philippe")
+        dom = 0
+        ext = 0
+        for i in range (len(club.match_realise_dom)):
+            dom += 1
+        for j in range (len(club.match_realise_ext)):
+            ext +=1
+        self.assertEqual(dom, 7) # on regarde si il y a bien eu 7 matchs joué à domicile
+        self.assertEqual(ext, 7) # et 7 matchs joué à l'éxterieur
+
 
 class TestJournee(unittest.TestCase):
-    def Test_resultat(self):
-        Jour = J.Journee
-        self.assertTrue(max(Jour.but_c1,Jour.but_c2)<7) # on regarde si le score est réaliste (pas plus de 7 buts par matchs)
+    def test_resultat(self):
+        champ = Ch.Championnat("ligue1")
+        max_but = champ.liste_scores[0] # problème car la liste n'est pas encore remplis. Je sais pas où on récupére les buts
+        for i in range (7):
+            if champ.liste_scores[i] > max_but:
+                max_but = champ.liste_scores[i]
+        self.assertTrue(max_but<8) # on regarde si le score est réaliste (pas plus de 8 buts pour une équipe)
 
-
-
-
-class TestChampionnat(unittest.TestCase):
-    def Test_dom_ext(self):
-        club = Ch.Championnat()
-        Jour = Ch.Championnat()
-        self.assertIsInstance(club.clubs, list)
-        self.assertEqual(Jour.journees, 14)
 
 
 
 class TestClub(unittest.TestCase):
-    def Test_note(self):
-        noteC = Cl.Club()
+    def test_note(self):
+        noteC = Cl.Club("Stade Brestois 29", "Philippe")
         self.assertTrue(noteC.note_club<85 and noteC.note_club>55) #on regarde si les notes des clubs sont réalistes (ni trop élevée, ni trop faible)
 
 if __name__ == '__main__':
-    rl.Test_note()
+    unittest.main()
