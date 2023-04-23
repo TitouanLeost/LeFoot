@@ -142,10 +142,10 @@ class TestJournee(unittest.TestCase):
                 max_but = champ.liste_scores[i]
         self.assertTrue(max_but<8) # on regarde si le score est réaliste (pas plus de 8 buts pour une équipe)
 
-    def test_score(self):
+    # def test_score(self):
 
 
-    def test_points(self):
+    # def test_points(self):
         
 
 
