@@ -27,7 +27,7 @@ class Club(list):
         Méthode permettant le remplissage des effectifs du club à partir de la BDD reserve_joueurs.
         """
         # con = sqlite3.connect("C:\WorkspacePython\LeFoot\BDD\BDD_joueurs.db")  # Mise en place de la connexion avec la database.
-        con = sqlite3.connect("C:\Users\hadrien dupuy\Desktop\ENSTA B\1A\2.4 projets\Projet informatique")
+        con = sqlite3.connect("C:\Users\hadrien dupuy\Desktop\ENSTA B\1A\2.4 projets\Projet informatique\BDD_joueurs.db")
         cur = con.cursor()  # Création du curseur.
         # Création de listes aléatoires contenant les futurs attaquants, défenseurs, milieux et gardiens du club.
         attaquant = cur.execute("SELECT * FROM reserve_joueurs WHERE poste == 'Attaquant' ORDER BY random() LIMIT 3")
