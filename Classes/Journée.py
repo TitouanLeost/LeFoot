@@ -22,7 +22,7 @@ class Journee():
         i = 0
         but_c1 = 0
         but_c2 = 0
-        # On crée différentes listes permettront de faire des tirages aléatoires.
+        # On crée différentes listes qui permettront de faire des tirages aléatoires.
         l1 = [0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5]
         l2 = [0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5]
         l3 = [0, 1, 1, 2, 2, 3]
@@ -71,22 +71,35 @@ class Journee():
         #print(f"dom_c2 = {dom_c2}")
         print("")
 
-        print(f"# Phase d'action de {c1} :")
-        print("")
-        # On détermine l'issue des actions de c1.
+        liste_actions = []
+        liste_temps = []
         for i in range(nb_act_c1):
-            act = self.action(c1, c2, dom_c1, dom_c2)
-            if act == 1:
-                but_c1 += 1  # On met à jour le nombre de buts de c1 dans ce match
-                c1.nb_buts += 1  # On met à jour le nombre de buts totaux de c1 dans le championnat
-        print(f"# Phase d'action de {c2} :")
-        print("")
-        # On détermine l'issue des actions de c2.
+            liste_actions.append("c1")
         for i in range(nb_act_c2):
-            act = self.action(c2, c1, dom_c2, dom_c1)
-            if act == 1:
-                but_c2 += 1  # On met à jour le nombre de buts de c2 dans ce match
-                c2.nb_buts += 1  # On met à jour le nombre de buts totaux de c2 dans le championnat
+            liste_actions.append("c2")
+        # On crée une liste contenant les minutes de chaque action
+        while len(liste_temps) < nb_act_c1 + nb_act_c2:
+            tps = rd.randint(5, 90)
+            if tps not in liste_temps:
+                liste_temps.append(tps)
+        rd.shuffle(liste_actions)  # On randomise l'ordre des actions de chaque équipe
+        liste_temps.sort(reverse=True)  # On range la liste de temps dans l'ordre décroissant
+
+        # On détermine l'issue des actions de chaque équipe.
+        for a in liste_actions:
+            t = liste_temps.pop()  # On récupère la minute à laquelle se déroule l'action
+            if a == "c1":
+                print(f"# Action de {c1} :")
+                act = self.action(c1, c2, dom_c1, dom_c2, t)
+                if act == 1:
+                    but_c1 += 1  # On met à jour le nombre de buts de c1 dans ce match
+                    c1.nb_buts += 1  # On met à jour le nombre de buts totaux de c1 dans le championnat
+            elif a == "c2":
+                print(f"# Action de {c2} :")
+                act = self.action(c2, c1, dom_c2, dom_c1, t)
+                if act == 1:
+                    but_c2 += 1  # On met à jour le nombre de buts de c2 dans ce match
+                    c2.nb_buts += 1  # On met à jour le nombre de buts totaux de c2 dans le championnat
 
         # On détermine l'issue du match et on attribue les points en conséquence.
         if but_c1 > but_c2:
@@ -103,7 +116,7 @@ class Journee():
             print(f"{c1} et {c2} font un match nul avec {but_c1} partout.")
             print("----------------------------------------------------------------------------")
 
-    def action(self, c1, c2, dom_c1, dom_c2):
+    def action(self, c1, c2, dom_c1, dom_c2, temps):
         """
         Fonction qui simule une action de c1 contre c2
 
@@ -111,6 +124,7 @@ class Journee():
         c2 : club en défense
         dom_c1 : domc1=1 si c1 est à domicile
         dom_c2 : domc2=1 si c2 est à domicile
+        temps : minute à laquelle se déroule l'action
         """
         note_att = 0
         note_def = 0
@@ -136,6 +150,35 @@ class Journee():
         print(f"Puissance attaque {c1} = {puis_att}")
         print(f"Puissance défense {c2} = {puis_def}")
 
+        # On prend en compte la possibilité qu'un joueur se blesse et/ou qu'une faute soit commise.
+        proba_blessure = rd.random()
+        proba_faute = rd.random()
+        if proba_blessure > 0.95:  # 5% de chance qu'un joueur se blesse
+            # On choisit le joueur blessé au hasard dans l'équipe attaquante.
+            ib = rd.randint(0, 10)
+            jb = c1[ib]
+            while jb.poste != "Attaquant" and jb.poste != "Milieu":
+                ib = rd.randint(0, 10)
+                jb = c1[ib]
+            jb.blessure()
+            if proba_faute > 0.5:  # Si un joueur est blessé, 50% de chance qu'il y ait faute
+                # On choisit le joueur qui comet la faute au hasard dans l'équipe défenseuse.
+                i_f = rd.randint(0, 10)
+                j_f = c1[i_f]
+                while j_f.poste != "Attaquant" and j_f.poste != "Milieu":
+                    i_f = rd.randint(0, 10)
+                    j_f = c1[i_f]
+                j_f.faute()
+        else:  # Si personne ne se blesse
+            if proba_faute > 0.85:  # Si aucun joueur n'est blessé, 15% de chance qu'il y ait faute
+                # On choisit le joueur qui comet la faute au hasard dans l'équipe défenseuse.
+                i_f = rd.randint(0, 10)
+                j_f = c1[i_f]
+                while j_f.poste != "Attaquant" and j_f.poste != "Milieu":
+                    i_f = rd.randint(0, 10)
+                    j_f = c1[i_f]
+                j_f.faute()
+
         # On détermine l'issue de l'action.
         if puis_att > puis_def:
             print(f"--> {c1} perce la défense de {c2}")
@@ -157,7 +200,7 @@ class Journee():
 
             # On détermine l'issue du tir.
             if note_frappe > note_arret:
-                print(f"===> {j.prenom[0]}.{j.nom} marque un but pour {c1} !")
+                print(f"===> {j.prenom[0]}.{j.nom} marque un but pour {c1} à la {temps}ème minute !")
                 print("- - - - - - - -")
                 j.but()
                 return 1
@@ -185,3 +228,8 @@ class Journee():
         while len(self.clubs) > 0:
             self.match()
         self.score_journee()
+        # Les joueurs récupèrent à chaque fin de journée.
+        for c in self.clubs_complet:
+            for j in c:
+                if j.etat != 0:
+                    j.recuperation()

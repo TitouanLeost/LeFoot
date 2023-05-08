@@ -9,7 +9,7 @@ class Club(list):
     def __init__(self, nom, entraineur):
         self.nom = nom
         self.entraineur = entraineur
-        self.joueurs = []
+        self.equipe = []
         self.score = 0
         self.nb_buts = 0
         self.note_club = 0
