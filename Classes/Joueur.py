@@ -44,7 +44,7 @@ class Joueur():
         """
         if self.carton == 0:  # Si le joueur n'a pas encore de carton
             # On détermine si le joueur reçoit un carton jaune (1) ou un carton rouge (2).
-            lf = [1, 1, 1, 1, 2]
+            lf = [1, 1, 1, 1, 1, 1, 1, 1, 1, 2]
             rd.shuffle(lf)
             self.carton = lf[0]
         elif self.carton == 1:  # Si le joueur a déjà un carton jaune

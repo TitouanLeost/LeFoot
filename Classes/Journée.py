@@ -56,10 +56,10 @@ class Journee():
             else:
                 i += 1
 
-        # On affiche les notes des clubs juste pour vérifier (Debug).
-        c1.calcul_note_club()
-        c2.calcul_note_club()
-        diff_note = c1.note_club - c2.note_club  # On calcule l'écart de note entre les clubs
+        # On affiche les notes des équipes juste pour vérifier (Debug).
+        c1.calcul_note_equipe()
+        c2.calcul_note_equipe()
+        diff_note = c1.note_equipe - c2.note_equipe  # On calcule l'écart de note entre les équipes
         print(diff_note)  # Debug
         # On détermine le nb d'actions qu'auront chaques clubs en fonction de tirages aléatoires, de la différence
         # et du caractère à domicile ou à l'extérieur de la rencontre.
@@ -130,12 +130,12 @@ class Journee():
         note_def = 0
         # On détermine la note d'attaque de c1 et celle de défense de c2.
         # Les milieux participent au calcul des deux notes, mais avec un poids moindre.
-        for j in c1:
+        for j in c1.equipe:
             if j.poste == "Attaquant":
                 note_att += j.note
             elif j.poste == "Milieu":
                 note_att += 0.5*j.note
-        for j in c2:
+        for j in c2.equipe:
             if j.poste == "Défenseur":
                 note_def += j.note
             elif j.poste == "Milieu":
@@ -153,43 +153,49 @@ class Journee():
         # On prend en compte la possibilité qu'un joueur se blesse et/ou qu'une faute soit commise.
         proba_blessure = rd.random()
         proba_faute = rd.random()
-        if proba_blessure > 0.95:  # 5% de chance qu'un joueur se blesse
+        if proba_blessure > 0.97:  # 5% de chance qu'un joueur se blesse
             # On choisit le joueur blessé au hasard dans l'équipe attaquante.
-            ib = rd.randint(0, 10)
-            jb = c1[ib]
+            ib = rd.randint(0, len(c1.equipe)-1)
+            jb = c1.equipe[ib]
             while jb.poste != "Attaquant" and jb.poste != "Milieu":
-                ib = rd.randint(0, 10)
-                jb = c1[ib]
+                ib = rd.randint(0, len(c1.equipe)-1)
+                jb = c1.equipe[ib]
             jb.blessure()
-            if proba_faute > 0.5:  # Si un joueur est blessé, 50% de chance qu'il y ait faute
-                # On choisit le joueur qui comet la faute au hasard dans l'équipe défenseuse.
-                i_f = rd.randint(0, 10)
-                j_f = c1[i_f]
+            if proba_faute > 0.7:  # Si un joueur est blessé, 50% de chance qu'il y ait faute
+                # On choisit le joueur qui commet la faute au hasard dans l'équipe défenseuse.
+                i_f = rd.randint(0, len(c2.equipe)-1)
+                j_f = c2.equipe[i_f]
                 while j_f.poste != "Attaquant" and j_f.poste != "Milieu":
-                    i_f = rd.randint(0, 10)
-                    j_f = c1[i_f]
+                    i_f = rd.randint(0, len(c2.equipe)-1)
+                    j_f = c2.equipe[i_f]
                 j_f.faute()
+                # Si le joueur reçoit un carton rouge, il est exclu du match.
+                if j_f.carton == 2:
+                    c2.equipe.remove(j_f)
         else:  # Si personne ne se blesse
-            if proba_faute > 0.85:  # Si aucun joueur n'est blessé, 15% de chance qu'il y ait faute
-                # On choisit le joueur qui comet la faute au hasard dans l'équipe défenseuse.
-                i_f = rd.randint(0, 10)
-                j_f = c1[i_f]
+            if proba_faute > 0.90:  # Si aucun joueur n'est blessé, 15% de chance qu'il y ait faute
+                # On choisit le joueur qui commet la faute au hasard dans l'équipe défenseuse.
+                i_f = rd.randint(0, len(c2.equipe)-1)
+                j_f = c2.equipe[i_f]
                 while j_f.poste != "Attaquant" and j_f.poste != "Milieu":
-                    i_f = rd.randint(0, 10)
-                    j_f = c1[i_f]
+                    i_f = rd.randint(0, len(c2.equipe)-1)
+                    j_f = c2.equipe[i_f]
                 j_f.faute()
+                # Si le joueur reçoit un carton rouge, il est exclu du match.
+                if j_f.carton == 2:
+                    c2.equipe.remove(j_f)
 
         # On détermine l'issue de l'action.
         if puis_att > puis_def:
             print(f"--> {c1} perce la défense de {c2}")
             # On choisit un joueur au hasard pour effectuer le tir final.
-            i = rd.randint(0,10)
-            j = c1[i]
+            i = rd.randint(0, len(c1.equipe)-1)
+            j = c1.equipe[i]
             gardien = c2[-1]  # On sélectionne le gardien de l'équipe en défense
             # Tant que le joueur sélectionné n'est pas un attaquant, on en sélectionne un autre.
             while j.poste != "Attaquant":
-                i = rd.randint(0,10)
-                j = c1[i]
+                i = rd.randint(0, len(c1.equipe)-1)
+                j = c1.equipe[i]
             # On détermine les notes de frappes et d'arrêt en fonction des notes de l'attaquant et du gardien ainsi
             # que de la ferveur des supporters (domicile/extérieur).
             note_frappe = j.note * rd.random() + dom_c1 * 10

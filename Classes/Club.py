@@ -13,6 +13,7 @@ class Club(list):
         self.score = 0
         self.nb_buts = 0
         self.note_club = 0
+        self.note_equipe = 0
         self.match_realise_dom = []
         self.match_realise_ext = []
 
@@ -59,6 +60,9 @@ class Club(list):
             self.append(joueur)
             cur.execute("DELETE FROM reserve_joueurs WHERE id == (?)", [j[0]])
             con.commit()
+        # On remplit la liste "équipe" qui correspond aux joueurs actifs
+        for j in self:
+            self.equipe.append(j)
 
 
     def victoire(self):
@@ -147,11 +151,18 @@ class Club(list):
         else:
             print(f"Il n'y a aucun joueur dans le club {self.nom}")
 
+    def calcul_note_equipe(self):
+        """
+        Méthode permettant le calcul de la note de l'équipe active.
+        """
+        self.note_equipe = 0  # On remet la note à 0 pour être sûr
+        for j in self.equipe:
+            self.note_equipe += j.note
+        self.note_equipe = self.note_equipe/11
+        print(f"La note de l'équipe active du club {self.nom} est : {self.note_equipe:.1f}")
 
     def affichage_score(self):
         print(f"{self.nom} à un score de {self.score}")
-
-
 
     def fiche_club(self):
         """
