@@ -153,7 +153,7 @@ class Journee():
         # On prend en compte la possibilité qu'un joueur se blesse et/ou qu'une faute soit commise.
         proba_blessure = rd.random()
         proba_faute = rd.random()
-        if proba_blessure > 0.97:  # 5% de chance qu'un joueur se blesse
+        if proba_blessure > 0.97:  # 3% de chance qu'un joueur se blesse
             # On choisit le joueur blessé au hasard dans l'équipe attaquante.
             ib = rd.randint(0, len(c1.equipe)-1)
             jb = c1.equipe[ib]
@@ -161,7 +161,7 @@ class Journee():
                 ib = rd.randint(0, len(c1.equipe)-1)
                 jb = c1.equipe[ib]
             jb.blessure()
-            if proba_faute > 0.7:  # Si un joueur est blessé, 50% de chance qu'il y ait faute
+            if proba_faute > 0.7:  # Si un joueur est blessé, 30% de chance qu'il y ait faute
                 # On choisit le joueur qui commet la faute au hasard dans l'équipe défenseuse.
                 i_f = rd.randint(0, len(c2.equipe)-1)
                 j_f = c2.equipe[i_f]
@@ -173,7 +173,7 @@ class Journee():
                 if j_f.carton == 2:
                     c2.equipe.remove(j_f)
         else:  # Si personne ne se blesse
-            if proba_faute > 0.90:  # Si aucun joueur n'est blessé, 15% de chance qu'il y ait faute
+            if proba_faute > 0.90:  # Si aucun joueur n'est blessé, 10% de chance qu'il y ait faute
                 # On choisit le joueur qui commet la faute au hasard dans l'équipe défenseuse.
                 i_f = rd.randint(0, len(c2.equipe)-1)
                 j_f = c2.equipe[i_f]

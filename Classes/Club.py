@@ -30,13 +30,13 @@ class Club(list):
         con = sqlite3.connect("C:\WorkspacePython\LeFoot\BDD\BDD_joueurs.db")  # Mise en place de la connexion avec la database.
         cur = con.cursor()  # Création du curseur.
         # Création de listes aléatoires contenant les futurs attaquants, défenseurs, milieux et gardiens du club.
-        attaquant = cur.execute("SELECT * FROM reserve_joueurs WHERE poste == 'Attaquant' ORDER BY random() LIMIT 3")
+        attaquant = cur.execute("SELECT DISTINCT * FROM reserve_joueurs WHERE poste == 'Attaquant' ORDER BY random() LIMIT 3")
         at = attaquant.fetchall()
-        defenseur = cur.execute("SELECT * FROM reserve_joueurs WHERE poste == 'Défenseur' ORDER BY random() LIMIT 3")
+        defenseur = cur.execute("SELECT DISTINCT * FROM reserve_joueurs WHERE poste == 'Défenseur' ORDER BY random() LIMIT 3")
         de = defenseur.fetchall()
-        milieu = cur.execute("SELECT * FROM reserve_joueurs WHERE poste == 'Milieu' ORDER BY random() LIMIT 4")
+        milieu = cur.execute("SELECT DISTINCT * FROM reserve_joueurs WHERE poste == 'Milieu' ORDER BY random() LIMIT 4")
         mi = milieu.fetchall()
-        gardien = cur.execute("SELECT * FROM reserve_joueurs WHERE poste == 'Gardien' ORDER BY random() LIMIT 1")
+        gardien = cur.execute("SELECT DISTINCT * FROM reserve_joueurs WHERE poste == 'Gardien' ORDER BY random() LIMIT 1")
         ga = gardien.fetchall()
         # Ajout des joueurs précédemment sélectionnés dans les effectifs du club.
         # On retire ensuite les joueurs sélectionnés de la BDD.
