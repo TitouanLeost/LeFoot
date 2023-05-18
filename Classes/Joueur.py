@@ -12,6 +12,7 @@ class Joueur():
         self.club = club
         self.etat = 0
         self.carton = 0
+        self.cpt_carton = 0
 
 
     def blessure(self):
@@ -36,7 +37,7 @@ class Joueur():
         # En cas de blessure, la note du joueur est réduite de 10, 20 ou 30% de la note originale.
         self.note = (1 - (self.etat / 10)) * self.note_originale
         print(f"{self.nom} s'est blessé (degré de la blessure : {degre_blessure})\n"
-              f". Note originale : {self.note_originale} /// Note : {self.note}")
+              f". Note originale : {self.note_originale} /// Note : {self.note : .2}")
 
     def faute(self):
         """
@@ -50,6 +51,7 @@ class Joueur():
         elif self.carton == 1:  # Si le joueur a déjà un carton jaune
             # Le joueur reçoit nécessairement un carton rouge.
             self.carton = 2
+            self.cpt_carton = 0  # On remet le compteur de matchs avec cartons à zéro
         if self.carton == 1:
             print(f"{self.nom} reçoit un carton jaune.")
         elif self.carton == 2:
@@ -67,6 +69,25 @@ class Joueur():
             self.note = (1 - (self.etat / 10)) * self.note_originale
             print(f"{self.nom} a récupéré de sa blessure (etat : {self.etat} /// note : {self.note})")
 
+
+    def reinitialisation_cartons(self):
+        """
+        Méthode réinitialisant les cartons obtenus par le joueur lors d'un match
+        """
+        # Remise à zéro des cartons jaunes s'ils ont été appliqués depuis 2 matchs.
+        if self.carton == 1:
+            if self.cpt_carton == 2:
+                self.carton = 0
+                self.cpt_carton = 0
+                print(f"{self.nom} n'a plus son carton jaune.")
+            self.cpt_carton += 1
+        # Remise à zéro des cartons rouges s'ils ont été appliqués depuis 5 matchs.
+        elif self.carton == 2:
+            if self.cpt_carton == 5:
+                self.carton = 0
+                self.cpt_carton = 0
+                print(f"{self.nom} n'a plus son carton rouge.")
+            self.cpt_carton += 1
 
 class Gardien(Joueur):
     def __init__(self, prenom, nom, note, club):

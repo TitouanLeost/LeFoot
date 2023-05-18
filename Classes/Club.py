@@ -22,14 +22,21 @@ class Club(list):
         return f"{self.nom}"
 
 
-
-    def remplissage_BDD(self):
+    def remplissage_bdd(self):
         """
-        Méthode permettant le remplissage des effectifs du club à partir de la BDD reserve_joueurs.
+        Méthode permettant le remplissage des effectifs du club à partir de la BDD reserve_joueurs. Ces effectifs
+        sont également sauvegardés dans une autre BDD afin de pouvoir les remettre dans le club au prochain
+        championnat.
         """
-        # con = sqlite3.connect("C:\WorkspacePython\LeFoot\BDD\BDD_joueurs.db")  # Mise en place de la connexion avec la database.
-        con = sqlite3.connect("C:\Users\hadrien dupuy\Desktop\ENSTA B\1A\2.4 projets\Projet informatique\BDD_joueurs.db")
+        # Mise en place de la connexion avec la database.
+        con = sqlite3.connect("C:\WorkspacePython\LeFoot\BDD\BDD_joueurs.db")
+        # Mise en place de la connexion avec la database de sauvegarde.
+        con2 = sqlite3.connect(f"C:\WorkspacePython\LeFoot\BDD\BDD_{self.nom}.db")
+        #con = sqlite3.connect("C:\Users\hadrien dupuy\Desktop\ENSTA B\1A\2.4 projets\Projet informatique\BDD_joueurs.db")
         cur = con.cursor()  # Création du curseur.
+        cur2 = con2.cursor()
+        cur2.execute("CREATE TABLE effectif(id, prénom, nom, poste, note)")  # Création de la table de sauvegarde
+
         # Création de listes aléatoires contenant les futurs attaquants, défenseurs, milieux et gardiens du club.
         attaquant = cur.execute("SELECT DISTINCT * FROM reserve_joueurs WHERE poste == 'Attaquant' ORDER BY random() LIMIT 3")
         at = attaquant.fetchall()
@@ -39,28 +46,78 @@ class Club(list):
         mi = milieu.fetchall()
         gardien = cur.execute("SELECT DISTINCT * FROM reserve_joueurs WHERE poste == 'Gardien' ORDER BY random() LIMIT 1")
         ga = gardien.fetchall()
+
         # Ajout des joueurs précédemment sélectionnés dans les effectifs du club.
         # On retire ensuite les joueurs sélectionnés de la BDD.
         for j in at:
             joueur = Attaquant(j[1], j[2], j[4], self.nom)
             self.append(joueur)
             cur.execute("DELETE FROM reserve_joueurs WHERE id == (?)", [j[0]])
+            # Sauvegarde des joueurs dans la table associée au club.
+            data = (j[0], j[1], j[2], j[3], j[4])
+            cur2.execute("INSERT INTO effectif(id, prénom, nom, poste, note) VALUES(?, ?, ?, ?, ?)", data)
             con.commit()
+            con2.commit()
         for j in de:
             joueur = Defenseur(j[1], j[2], j[4], self.nom)
             self.append(joueur)
             cur.execute("DELETE FROM reserve_joueurs WHERE id == (?)", [j[0]])
+            # Sauvegarde des joueurs dans la table associée au club.
+            data = (j[0], j[1], j[2], j[3], j[4])
+            cur2.execute("INSERT INTO effectif(id, prénom, nom, poste, note) VALUES(?, ?, ?, ?, ?)", data)
             con.commit()
+            con2.commit()
         for j in mi:
             joueur = Milieu(j[1], j[2], j[4], self.nom)
             self.append(joueur)
             cur.execute("DELETE FROM reserve_joueurs WHERE id == (?)", [j[0]])
+            # Sauvegarde des joueurs dans la table associée au club.
+            data = (j[0], j[1], j[2], j[3], j[4])
+            cur2.execute("INSERT INTO effectif(id, prénom, nom, poste, note) VALUES(?, ?, ?, ?, ?)", data)
             con.commit()
+            con2.commit()
         for j in ga:
             joueur = Gardien(j[1], j[2], j[4], self.nom)
             self.append(joueur)
             cur.execute("DELETE FROM reserve_joueurs WHERE id == (?)", [j[0]])
+            # Sauvegarde des joueurs dans la table associée au club.
+            data = (j[0], j[1], j[2], j[3], j[4])
+            cur2.execute("INSERT INTO effectif(id, prénom, nom, poste, note) VALUES(?, ?, ?, ?, ?)", data)
             con.commit()
+            con2.commit()
+        # On remplit la liste "équipe" qui correspond aux joueurs actifs
+        for j in self:
+            self.equipe.append(j)
+
+
+    def remplissage_copie_bdd(self):
+        """
+        Méthode permettant de copier les effectifs d'un club entre deux championnats pour simuler de nouveau
+        le même championnat.
+        """
+        con = sqlite3.connect(f"C:\WorkspacePython\LeFoot\BDD\BDD_{self.nom}.db")
+        cur = con.cursor()
+        attaquant = cur.execute("SELECT * FROM effectif WHERE poste == 'Attaquant'")
+        at = attaquant.fetchall()
+        defenseur = cur.execute("SELECT * FROM effectif WHERE poste == 'Défenseur'")
+        de = defenseur.fetchall()
+        milieu = cur.execute("SELECT * FROM effectif WHERE poste == 'Milieu'")
+        mi = milieu.fetchall()
+        gardien = cur.execute("SELECT * FROM effectif WHERE poste == 'Gardien'")
+        ga = gardien.fetchall()
+
+        for j in at:
+            joueur = Attaquant(j[1], j[2], j[4], self.nom)
+            self.append(joueur)
+        for j in de:
+            joueur = Defenseur(j[1], j[2], j[4], self.nom)
+            self.append(joueur)
+        for j in mi:
+            joueur = Milieu(j[1], j[2], j[4], self.nom)
+            self.append(joueur)
+        for j in ga:
+            joueur = Gardien(j[1], j[2], j[4], self.nom)
+            self.append(joueur)
         # On remplit la liste "équipe" qui correspond aux joueurs actifs
         for j in self:
             self.equipe.append(j)
@@ -169,7 +226,7 @@ class Club(list):
         """
         Fonction enregistrant les données du club (joueurs, entraineur, nom et note du club).
         """
-        fichier_club = open(f"C:\WorkspacePython\LeFoot\Fichiers\\fiche de {self.nom}", 'wt')
+        fichier_club = open(f"C:\WorkspacePython\LeFoot\Fichiers\\fiche de {self.nom}.txt", 'wt')
         self.liste_joueurs(fichier_club)
         self.calcul_note_club_log(fichier_club)
         buteurs = self.classement_buteurs_club()

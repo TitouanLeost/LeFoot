@@ -16,22 +16,29 @@ class Championnat():
         return f"{self.nom}"
 
 
-    def remplissage(self):
+    def remplissage(self, copie):
         """
         Méthode permettant le remplissage du championnat avec les clubs participant.
 
-        liste : liste des clubs participants
+        copie : paramètre permettant de spécifier si le championnat doit être relancé avec les mêmes équipes ou non.
         """
-        for c in self.liste_clubs:
-            c.remplissage_BDD()
-            self.clubs.append(c)
+        if copie == True:
+            for c in self.liste_clubs:
+                c.remplissage_copie_bdd()
+                self.clubs.append(c)
+        else:
+            for c in self.liste_clubs:
+                c.remplissage_bdd()
+                self.clubs.append(c)
 
 
-    def simuler(self):
+    def simuler(self, copie=False):
         """
         Fonction permettant de simuler le déroulement complet du championnat.
+
+        copie : paramètre permettant de spécifier si le championnat doit être relancé avec les mêmes équipes ou non.
         """
-        self.remplissage()
+        self.remplissage(copie)
         nb_j = self.journees
         for i in range(1, nb_j+1):
             # Simulation des journées
@@ -47,7 +54,7 @@ class Championnat():
         Fonction permettant d'afficher le tableau des scores en fin de championnat et de l'enregistrer dans un fichier.
         """
         # Affichage personnalisé pour le gagnant.
-        fichier_score = open("C:\WorkspacePython\LeFoot\Fichiers\\fichier des scores finaux", 'wt')
+        fichier_score = open("C:\WorkspacePython\LeFoot\Fichiers\\fichier des scores finaux.txt", 'wt')
         c = self.liste_scores[0]
         print(f"{c} remporte {self.nom} avec {c.score} points et {c.nb_buts} buts marqués !")
         fichier_score.write(f"{c} remporte {self.nom} avec {c.score} points et {c.nb_buts} buts marqués !\n")

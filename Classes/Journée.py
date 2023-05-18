@@ -239,3 +239,5 @@ class Journee():
             for j in c:
                 if j.etat != 0:
                     j.recuperation()
+                if j.carton != 0:
+                    j.reinitialisation_cartons()
