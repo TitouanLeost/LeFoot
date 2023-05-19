@@ -38,7 +38,7 @@ class Championnat():
 
         copie : paramètre permettant de spécifier si le championnat doit être relancé avec les mêmes équipes ou non.
         """
-        self.remplissage(copie)
+        # self.remplissage(copie)
         nb_j = self.journees
         for i in range(1, nb_j+1):
             # Simulation des journées
@@ -110,6 +110,11 @@ class Championnat():
         return joueur.nb_buts
 
 
-    def creation_fiche_clubs(self):
+    def creation_fiche_clubs(self, final=True):
+        """
+        Méthode permettant de créer toutes les fiches des clubs participant au championnat.
+
+        final : paramètre spécifiant si la fiche est créée à la fin du championnat ou non.
+        """
         for c in self.clubs:
-            c.fiche_club()
+            c.fiche_club(final)

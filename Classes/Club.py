@@ -222,18 +222,23 @@ class Club(list):
     def affichage_score(self):
         print(f"{self.nom} à un score de {self.score}")
 
-    def fiche_club(self):
+    def fiche_club(self, final):
         """
         Fonction enregistrant les données du club (joueurs, entraineur, nom et note du club).
+
+        final : paramètre spécifiant si la fiche est créée à la fin du championnat ou non.
         """
         fichier_club = open(f"C:\WorkspacePython\LeFoot\Fichiers\\fiche de {self.nom}.txt", 'wt')
         self.liste_joueurs(fichier_club)
         self.calcul_note_club_log(fichier_club)
         buteurs = self.classement_buteurs_club()
         fichier_club.write("\n")
-        fichier_club.write(f"Les meilleurs buteurs de {self.nom} sont :\n")
-        for j in buteurs:
-            fichier_club.write(f"    {j.prenom[0]}.{j.nom} avec {j.nb_buts} buts\n")
-        fichier_club.write("\n")
-        fichier_club.write(f"{self[-1].prenom[0]}.{self[-1].nom} a arrêté {self[-1].nb_arrets} tirs.\n")
+        # Si on veut afficher la fiche du club à la fin du championnat, on ajoute le classement des buteurs et le
+        # nombre d'arrêts du gardien.
+        if final == True:
+            fichier_club.write(f"Les meilleurs buteurs de {self.nom} sont :\n")
+            for j in buteurs:
+                fichier_club.write(f"    {j.prenom[0]}.{j.nom} avec {j.nb_buts} buts\n")
+            fichier_club.write("\n")
+            fichier_club.write(f"{self[-1].prenom[0]}.{self[-1].nom} a arrêté {self[-1].nb_arrets} tirs.\n")
         fichier_club.close()
