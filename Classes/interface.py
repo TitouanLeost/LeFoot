@@ -25,13 +25,15 @@ class MainWindow(QMainWindow):
         layout.addWidget(bouton_creer)
         bouton_creer.clicked.connect(self.clique_bouton_creer)
         # Mise en place du bouton permettant de visualiser les fiches des clubs.
-        bouton_visu = QPushButton("Visualiser les clubs")
-        layout.addWidget(bouton_visu)
-        bouton_visu.clicked.connect(self.clique_bouton_visu)
+        self.bouton_visu = QPushButton("Visualiser les clubs")
+        layout.addWidget(self.bouton_visu)
+        self.bouton_visu.clicked.connect(self.clique_bouton_visu)
+        self.bouton_visu.setDisabled(True)
         # Mise en place du bouton permettant de lancer la simulation.
-        bouton_simu = QPushButton("Simuler")
-        layout.addWidget(bouton_simu)
-        bouton_simu.clicked.connect(self.clique_bouton_simu)
+        self.bouton_simu = QPushButton("Simuler")
+        layout.addWidget(self.bouton_simu)
+        self.bouton_simu.clicked.connect(self.clique_bouton_simu)
+        self.bouton_simu.setDisabled(True)
 
         # On crée un widget permettant d'afficher les boutons
         widget = QWidget()
@@ -55,6 +57,9 @@ class MainWindow(QMainWindow):
         self.champ = Championnat.Championnat("ligue 1", [sb, sr, se, gu, fs, cc, sc, rl])  # Création du championnat
         self.champ.remplissage(True)  # Remplissage des effectifs des clubs
         self.champ.creation_fiche_clubs(False)  # Création des fiches des clubs
+        # On active les boutons "Visualiser les clubs" et "Simuler".
+        self.bouton_visu.setDisabled(False)
+        self.bouton_simu.setDisabled(False)
         print("Création Ok")  # Debug
 
     def clique_bouton_visu(self):
@@ -62,7 +67,7 @@ class MainWindow(QMainWindow):
         Méthode déclenchée par l'appui sur le bouton "Visualiser les clubs". Elle permet d'ouvrir une nouvelle
         fenêtre qui contient l'affichage des fiches des clubs.
         """
-        self.w = Visu_clubs(self.champ.clubs)  # Création de la fenêtre
+        self.w = VisuClubs(self.champ.clubs)  # Création de la fenêtre
         self.w.show()  # Affichage de la fenêtre
         print("Visu Ok")  # Debug
 
@@ -70,12 +75,12 @@ class MainWindow(QMainWindow):
         """
         Méthode déclenchée par l'appui sur le bouton "Simuler". Elle permet de lancer la simulation.
         """
-        self.champ.simuler(True)  # Simulation
+        self.champ.simuler()  # Simulation
         self.champ.creation_fiche_clubs()  # Enregistrement des données des clubs dans des fichiers texte
         print("Simulation OK")  # Debug
 
 
-class Visu_clubs(QMainWindow):
+class VisuClubs(QMainWindow):
     """
     Classe définissant la fenêtre contenant les informations relatives aux clubs
     """

@@ -32,13 +32,10 @@ class Championnat():
                 self.clubs.append(c)
 
 
-    def simuler(self, copie=False):
+    def simuler(self):
         """
         Fonction permettant de simuler le déroulement complet du championnat.
-
-        copie : paramètre permettant de spécifier si le championnat doit être relancé avec les mêmes équipes ou non.
         """
-        # self.remplissage(copie)
         nb_j = self.journees
         for i in range(1, nb_j+1):
             # Simulation des journées

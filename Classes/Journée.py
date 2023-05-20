@@ -22,6 +22,8 @@ class Journee():
         i = 0
         but_c1 = 0
         but_c2 = 0
+        liste_buteurs = []
+        liste_arrets = []
         # On crée différentes listes qui permettront de faire des tirages aléatoires.
         l1 = [0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5]
         l2 = [0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5]
@@ -90,16 +92,29 @@ class Journee():
             t = liste_temps.pop()  # On récupère la minute à laquelle se déroule l'action
             if a == "c1":
                 print(f"# Action de {c1} :")
-                act = self.action(c1, c2, dom_c1, dom_c2, t)
-                if act == 1:
+                but, joueur, temps = self.action(c1, c2, dom_c1, dom_c2, t)
+                if but == 1:
                     but_c1 += 1  # On met à jour le nombre de buts de c1 dans ce match
                     c1.nb_buts += 1  # On met à jour le nombre de buts totaux de c1 dans le championnat
+                    liste_buteurs.append([joueur, temps])
+                elif but == 0:
+                    liste_arrets.append([joueur, temps])
+                    print("joueur :", joueur)
             elif a == "c2":
                 print(f"# Action de {c2} :")
-                act = self.action(c2, c1, dom_c2, dom_c1, t)
-                if act == 1:
+                but, joueur, temps = self.action(c2, c1, dom_c2, dom_c1, t)
+                if but == 1:
                     but_c2 += 1  # On met à jour le nombre de buts de c2 dans ce match
                     c2.nb_buts += 1  # On met à jour le nombre de buts totaux de c2 dans le championnat
+                    liste_buteurs.append([joueur, temps])
+                elif but == 0:
+                    liste_arrets.append([joueur, temps])
+                    print("joueur :", joueur)
+
+        if dom_c1 == 1:
+            self.resume_match_log(c1, c2, liste_buteurs, liste_arrets, but_c1, but_c2)
+        else:
+            self.resume_match_log(c2, c1, liste_buteurs, liste_arrets, but_c2, but_c1)
 
         # On détermine l'issue du match et on attribue les points en conséquence.
         if but_c1 > but_c2:
@@ -209,16 +224,17 @@ class Journee():
                 print(f"===> {j.prenom[0]}.{j.nom} marque un but pour {c1} à la {temps}ème minute !")
                 print("- - - - - - - -")
                 j.but()
-                return 1
+                return 1, j, temps
             else:
                 print(f"===> {gardien.prenom[0]}.{gardien.nom} arrête le tir de {j.prenom[0]}.{j.nom}")
                 print("- - - - - - - -")
                 gardien.arret()
-                return 0
+                return 0, gardien, temps
 
         else:
             print(f"--> La défense de {c2} parvient à repousser l'offensive de {c1}")
             print("- - - - - - - -")
+            return 2, 0, 0
 
     def score_journee(self):
         """
@@ -241,3 +257,35 @@ class Journee():
                     j.recuperation()
                 if j.carton != 0:
                     j.reinitialisation_cartons()
+
+    def resume_match_log(self, c1, c2, liste_buteurs, liste_arrets, but_c1, but_c2):
+        """
+        Méthode permettant d'enregistrer le résumé d'un match dans un fichier texte.
+
+        c1 : Le club qui joue à domicile.
+        c2 : Le club qui joue à l'extérieur.
+        liste_buteurs : Liste contenant tous les buteurs du match ainsi que la minute de leurs buts.
+        liste_arrets : Liste contenant tous les arrêts du match ainsi que la minute de l'arrêt.
+        but_c1 : Nombre de buts de c1.
+        but_c2 : Nombre de buts de c2.
+        """
+        f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {self.num}, match {c1.nom}-{c2.nom}.txt", 'wt')
+        # Affichage des buteurs.
+        f.write("BUTEURS :\n")
+        for i in range(len(liste_buteurs)):
+            buteur = liste_buteurs[i][0]
+            temps = liste_buteurs[i][1]
+            f.write(f"  > {buteur.nom} ({temps}' - {buteur.club})\n")
+        f.write("\n")
+        # Affichage des arrêts.
+        f.write("ARRETS :\n")
+        for i in range(len(liste_arrets)):
+            gardien = liste_arrets[i][0]
+            temps = liste_arrets[i][1]
+            f.write(f"  > {gardien.nom} ({temps}' - {gardien.club})\n")
+        f.write("\n")
+        # Affichage du score.
+        f.write("SCORE :\n")
+        f.write(f"   {c1.nom} - {c2.nom}\n")
+        f.write(f"   {but_c1} - {but_c2}")
+        f.close()
