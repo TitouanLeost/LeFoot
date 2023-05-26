@@ -100,7 +100,7 @@ class Gardien(Joueur):
         self.nb_arrets = 0
 
     def __str__(self):
-        return f"{self.prenom[0]}.{self.nom}, {self.poste} ({self.note_originale}) | {self.club}"
+        return f"{self.prenom[0]}.{self.nom}, {self.poste} ({self.note_originale})"
 
     def arret(self):
         self.nb_arrets += 1
@@ -113,7 +113,7 @@ class Attaquant(Joueur):
         self.nb_buts = 0
 
     def __str__(self):
-        return f"{self.prenom[0]}.{self.nom}, {self.poste} ({self.note_originale}) | {self.club}"
+        return f"{self.prenom[0]}.{self.nom}, {self.poste} ({self.note_originale})"
 
     def but(self):
         self.nb_buts += 1
@@ -125,7 +125,7 @@ class Milieu(Joueur):
         self.poste = "Milieu"
 
     def __str__(self):
-        return f"{self.prenom[0]}.{self.nom}, {self.poste} ({self.note_originale}) | {self.club}"
+        return f"{self.prenom[0]}.{self.nom}, {self.poste} ({self.note_originale})"
 
 
 class Defenseur(Joueur):
@@ -134,5 +134,5 @@ class Defenseur(Joueur):
         self.poste = "Défenseur"
 
     def __str__(self):
-        return f"{self.prenom[0]}.{self.nom}, {self.poste} ({self.note_originale}) | {self.club}"
+        return f"{self.prenom[0]}.{self.nom}, {self.poste} ({self.note_originale})"
 
