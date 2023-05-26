@@ -10,6 +10,7 @@ class Championnat():
         self.liste_clubs = liste_clubs
         self.clubs = []
         self.journees = 14
+        self.journees_liste = []
         self.liste_scores = []
 
     def __str__(self):
@@ -41,6 +42,7 @@ class Championnat():
             # Simulation des journées
             j = Journée.Journee(i, self)
             j.deroulement()
+            self.journees_liste.append(j)
             print("=====================================================")
         self.score_final()  # Création de la liste des scores
         self.tableau_score()  # Affichage du score final

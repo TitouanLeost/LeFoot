@@ -61,6 +61,10 @@ class Journee():
                 print(f"{c2} joue à domicile contre {c1}")
             else:
                 i += 1
+        if dom_c1 == 1:
+            self.matchs.append([c1, c2])
+        else:
+            self.matchs.append([c2, c1])
 
         # On affiche les notes des équipes juste pour vérifier (Debug).
         c1.calcul_note_equipe()

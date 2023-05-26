@@ -4,7 +4,7 @@ import Championnat
 from Creation_BDD import creation_bdd, copie_bdd
 
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout, QStackedLayout, QWidget, QLabel, QTabWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QComboBox, QVBoxLayout, QHBoxLayout, QGridLayout, QStackedLayout, QWidget, QLabel, QTabWidget, QStackedWidget
 
 
 class MainWindow(QMainWindow):
@@ -80,6 +80,7 @@ class MainWindow(QMainWindow):
         print("Simulation OK")  # Debug
         self.w = VisuComplet(self.champ)
         self.w.show()
+        self.hide()
 
 
 class VisuClubs(QMainWindow):
@@ -126,6 +127,7 @@ class VisuComplet(QMainWindow):
         self.resultats_txt = ""
         self.resume_txt = ""
         self.club_txt = ""
+        self.index_journee = 0
 
         # Création des onglets de navigation
         tabs = QTabWidget()
@@ -158,9 +160,42 @@ class VisuComplet(QMainWindow):
         f.close()
 
     def resumeMatchTab(self):
-        resumeMatch = QWidget()
+        """
+        Méthode permettant d'afficher les résumés des matchs dans un onglet.
+        """
+        resumeMatch = QWidget()  # Création du widget correspondant à la visualisation des résumés
+        # Création d'un layout contenant les QComboBox, d'un second contenant l'affichage des résumés stackés et d'un
+        # troisième contenant les deux premiers.
         layout = QVBoxLayout()
-        layout.addWidget(QLabel("Résumé des matchs"))
+        bouton_layout = QHBoxLayout()
+        self.stacked_layout_m = QStackedLayout()
+        # Ajout des layouts des QComboBox et de l'affichage au layout principal.
+        layout.addLayout(bouton_layout)
+        layout.addLayout(self.stacked_layout_m)
+        # Création des widgets participants à l'affichage.
+        selection_journee = QComboBox()  # QComboBox permettant de sélectionner la journée
+        self.selection_match_stack = QStackedWidget()  # Création d'un stack de widget pour la sélection des matchs
+
+        # Ajout des items dans les boites de sélection de la journée et du match.
+        for i, j in enumerate(self.champ.journees_liste, start=1):
+            selection_journee.addItem(f"Journée {i}")
+            selection_match = QComboBox()  # Création d'une QComboBox pour tous les matchs d'une journée
+            # Ajout des matchs de la journée en cours dans la QComboBox.
+            for m in j.matchs:
+                selection_match.addItem(f"{m[0].nom} - {m[1].nom}")
+                self.texte_resume_match(m[0], m[1], i)  # Création du texte du résumé du match
+                self.stacked_layout_m.addWidget(QLabel(self.resume_txt))  # Ajout du résumé à l'affichage stacké
+            self.selection_match_stack.addWidget(selection_match)  # Ajout de la QComboBox des matchs au stack de widget
+            # Sélection de l'affichage correspondant au match choisi dans la seconde boite de sélection.
+            selection_match.currentIndexChanged.connect(self.match_index_changed)
+
+        # Sélection de la QComboBox des matchs correspondant à la journée sélectionné dans la première boite de
+        # sélection.
+        selection_journee.currentIndexChanged.connect(self.journee_index_changed)
+        # Ajout des deux boites de sélection au layout correspondant.
+        bouton_layout.addWidget(selection_journee)
+        bouton_layout.addWidget(self.selection_match_stack)
+        # Définition du layout de notre widget.
         resumeMatch.setLayout(layout)
         return resumeMatch
 
@@ -181,11 +216,11 @@ class VisuComplet(QMainWindow):
         # On crée un troisième layout qui contiendra les deux premiers.
         layout = QHBoxLayout()
         bouton_layout = QVBoxLayout()
-        self.stacked_layout = QStackedLayout()
+        self.stacked_layout_c = QStackedLayout()
         bouton_layout.setContentsMargins(0, 0, 30, 0)
         # On ajoute les layouts des boutons et des fiches au layout principal.
         layout.addLayout(bouton_layout)
-        layout.addLayout(self.stacked_layout)
+        layout.addLayout(self.stacked_layout_c)
         # Création des boutons, un par club.
         for i, c in enumerate(self.champ.clubs):
             btn = QPushButton(c.nom)
@@ -208,34 +243,55 @@ class VisuComplet(QMainWindow):
                 btn.pressed.connect(self.activate_tab_7)
             bouton_layout.addWidget(btn)  # Ajout des boutons au layout correspondant
             self.texte_club(c.nom)  # Création du texte à afficher pour la fiche du club
-            self.stacked_layout.addWidget(QLabel(self.club_txt))  # Ajout de la fiche au layout stacké
+            self.stacked_layout_c.addWidget(QLabel(self.club_txt))  # Ajout de la fiche au layout stacké
         # Définition du layout de notre widget
         visuClubs.setLayout(layout)
         return visuClubs
 
+    def journee_index_changed(self, i):
+        self.selection_match_stack.setCurrentIndex(i)
+        self.index_journee = i
+
+    def match_index_changed(self, i):
+        self.stacked_layout_m.setCurrentIndex(self.index_journee * 4 + i)
+
     def activate_tab_0(self):
-        self.stacked_layout.setCurrentIndex(0)
+        self.stacked_layout_c.setCurrentIndex(0)
 
     def activate_tab_1(self):
-        self.stacked_layout.setCurrentIndex(1)
+        self.stacked_layout_c.setCurrentIndex(1)
 
     def activate_tab_2(self):
-        self.stacked_layout.setCurrentIndex(2)
+        self.stacked_layout_c.setCurrentIndex(2)
 
     def activate_tab_3(self):
-        self.stacked_layout.setCurrentIndex(3)
+        self.stacked_layout_c.setCurrentIndex(3)
 
     def activate_tab_4(self):
-        self.stacked_layout.setCurrentIndex(4)
+        self.stacked_layout_c.setCurrentIndex(4)
 
     def activate_tab_5(self):
-        self.stacked_layout.setCurrentIndex(5)
+        self.stacked_layout_c.setCurrentIndex(5)
 
     def activate_tab_6(self):
-        self.stacked_layout.setCurrentIndex(6)
+        self.stacked_layout_c.setCurrentIndex(6)
 
     def activate_tab_7(self):
-        self.stacked_layout.setCurrentIndex(7)
+        self.stacked_layout_c.setCurrentIndex(7)
+
+    def texte_resume_match(self, c1, c2, num):
+        """
+        Méthode permettant d'afficher le résumé du match ayant opposé les clubs c1 et c2.
+
+        c1 : club ayant jué à domicile.
+        c2 : club ayant joué à l'extérieur.
+        num : numéro de la journée à laquelle s'est déroulé le match.
+        """
+        self.resume_txt = ""  # Effacement de ce qui était précédemment écrit dans la variable self.club_txt
+        # Lecture du fichier.
+        f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {num}, match {c1.nom}-{c2.nom}.txt", 'rt')
+        self.resume_txt += f.read()  # Écriture dans la variable
+        f.close()
 
     def texte_club(self, nom):
         """
