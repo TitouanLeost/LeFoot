@@ -9,6 +9,8 @@ class Journee():
         self.matchs = []
         self.clubs_complet = championnat.clubs.copy()  # liste contenant tous les clubs participant au championnat
         self.clubs = championnat.clubs.copy()  # Liste contenant les clubs n'ayant pas encore joué sur la journée
+        self.joueurs_cartons = []  # Liste contenant les joueurs ayant reçu un carton lors d'un match
+        self.joueurs_blessures = []  # Liste contenant les joueurs s'étant blessé lors d'un match
 
     def __str__(self):
         return f"Journée n°{self.num}"
@@ -24,6 +26,8 @@ class Journee():
         but_c2 = 0
         liste_buteurs = []
         liste_arrets = []
+        self.joueurs_cartons = []  # On réinitialise la liste
+        self.joueurs_blessures = []  # On réinitialise la liste
         # On crée différentes listes qui permettront de faire des tirages aléatoires.
         l1 = [0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5]
         l2 = [0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5]
@@ -176,29 +180,26 @@ class Journee():
                 ib = rd.randint(0, len(c1.equipe)-1)
                 jb = c1.equipe[ib]
             jb.blessure()
-            if proba_faute > 0.7:  # Si un joueur est blessé, 30% de chance qu'il y ait faute
-                # On choisit le joueur qui commet la faute au hasard dans l'équipe défenseuse.
-                i_f = rd.randint(0, len(c2.equipe)-1)
-                j_f = c2.equipe[i_f]
-                while j_f.poste != "Attaquant" and j_f.poste != "Milieu":
-                    i_f = rd.randint(0, len(c2.equipe)-1)
-                    j_f = c2.equipe[i_f]
-                j_f.faute()
-                # Si le joueur reçoit un carton rouge, il est exclu du match.
-                if j_f.carton == 2:
-                    c2.equipe.remove(j_f)
+            # On ajoute le joueur à la liste des blessés du match.
+            if jb not in self.joueurs_blessures:
+                self.joueurs_blessures.append(jb)
+            seuil_faute = 0.7  # Si un joueur est blessé, 30% de chance qu'il y ait faute
         else:  # Si personne ne se blesse
-            if proba_faute > 0.90:  # Si aucun joueur n'est blessé, 10% de chance qu'il y ait faute
-                # On choisit le joueur qui commet la faute au hasard dans l'équipe défenseuse.
+            seuil_faute = 0.9  # Si aucun joueur n'est blessé, 10% de chance qu'il y ait faute
+        if proba_faute > seuil_faute:
+            # On choisit le joueur qui commet la faute au hasard dans l'équipe défenseuse.
+            i_f = rd.randint(0, len(c2.equipe)-1)
+            j_f = c2.equipe[i_f]
+            while j_f.poste != "Attaquant" and j_f.poste != "Milieu":
                 i_f = rd.randint(0, len(c2.equipe)-1)
                 j_f = c2.equipe[i_f]
-                while j_f.poste != "Attaquant" and j_f.poste != "Milieu":
-                    i_f = rd.randint(0, len(c2.equipe)-1)
-                    j_f = c2.equipe[i_f]
-                j_f.faute()
-                # Si le joueur reçoit un carton rouge, il est exclu du match.
-                if j_f.carton == 2:
-                    c2.equipe.remove(j_f)
+            j_f.faute()
+            # On ajoute le joueur à la liste de ceux ayant reçu un carton lors du match.
+            if j_f not in self.joueurs_cartons:
+                self.joueurs_cartons.append(j_f)
+            # Si le joueur reçoit un carton rouge, il est exclu du match.
+            if j_f.carton == 2:
+                c2.equipe.remove(j_f)
 
         # On détermine l'issue de l'action.
         if puis_att > puis_def:
@@ -283,6 +284,24 @@ class Journee():
             gardien = liste_arrets[i][0]
             temps = liste_arrets[i][1]
             f.write(f"  > {gardien.nom} ({temps}' - {gardien.club})\n")
+        f.write("\n")
+        # Affichage des cartons.
+        for j in self.joueurs_cartons:
+            if j.carton == 1:
+                carton = "jaune"
+            else:
+                carton = "rouge"
+            f.write(f"{j.nom} ({j.club}) à reçu un carton {carton}\n")
+        f.write("\n")
+        # Affichage des blessures.
+        for j in self.joueurs_blessures:
+            if j.etat == 1:
+                blessure = "lègerement blessé"
+            elif j.etat == 2:
+                blessure = "blessé"
+            else:
+                blessure = "grièvement blessé"
+            f.write(f"{j.nom} ({j.club}) s'est {blessure}\n")
         f.write("\n")
         # Affichage du score.
         f.write("SCORE :\n")

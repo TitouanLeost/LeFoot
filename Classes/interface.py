@@ -4,7 +4,7 @@ import Championnat
 from Creation_BDD import creation_bdd, copie_bdd
 
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QLabel, QTabWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout, QStackedLayout, QWidget, QLabel, QTabWidget
 
 
 class MainWindow(QMainWindow):
@@ -78,6 +78,8 @@ class MainWindow(QMainWindow):
         self.champ.simuler()  # Simulation
         self.champ.creation_fiche_clubs()  # Enregistrement des données des clubs dans des fichiers texte
         print("Simulation OK")  # Debug
+        self.w = VisuComplet(self.champ)
+        self.w.show()
 
 
 class VisuClubs(QMainWindow):
@@ -94,8 +96,8 @@ class VisuClubs(QMainWindow):
         # Création des onglets de navigation de chaque club.
         tabs = QTabWidget()
         for c in self.clubs:
-            self.texte_club(c.nom)
-            tab = QLabel(self.texte)
+            self.texte_club(c.nom)  # Création du contenu de la page associée à l'onglet
+            tab = QLabel(self.texte)  # Affichage du contenu dans la page associée à l'onglet
             tabs.addTab(tab, c.nom)
 
         self.setCentralWidget(tabs)
@@ -109,7 +111,142 @@ class VisuClubs(QMainWindow):
         self.texte = ""  # Effacement de ce qui était précédemment écrit dans la variable self.texte
         f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\fiche de {nom}.txt", 'rt')  # Lecture du fichier
         self.texte += f.read()  # Écriture dans la variable
+        f.close()
 
+
+class VisuComplet(QMainWindow):
+    """
+    Classe définissant la fenêtre affichée après la simulation du match.
+    """
+    def __init__(self, championnat):
+        super().__init__()
+        self.setWindowTitle("Visualisation finale")
+        self.setMinimumSize(700, 300)
+        self.champ = championnat
+        self.resultats_txt = ""
+        self.resume_txt = ""
+        self.club_txt = ""
+
+        # Création des onglets de navigation
+        tabs = QTabWidget()
+
+        # Onglet des résultats du championnat
+        self.resultats()  # Création du texte à afficher pour les résultats
+        tab1 = QLabel(self.resultats_txt)
+        tabs.addTab(tab1, "Résultats")
+
+        # Onglet des résumés des matchs
+        tab2 = self.resumeMatchTab()
+        tabs.addTab(tab2, "Résumé des matchs")
+
+        # Onglet des classements des joueurs
+        tab3 = self.classementJoueurTab()
+        tabs.addTab(tab3, "Classement des joueurs")
+
+        # Onglet des fiches des clubs
+        tab4 = self.visuClubsTab()
+        tabs.addTab(tab4, "Visualiser les clubs")
+
+        self.setCentralWidget(tabs)
+
+    def resultats(self):
+        """
+        Méthode permettant d'afficher les résultats finaux du championnat.
+        """
+        f = open("C:\WorkspacePython\LeFoot\Fichiers\\fichier des scores finaux.txt", 'rt')
+        self.resultats_txt += f.read()
+        f.close()
+
+    def resumeMatchTab(self):
+        resumeMatch = QWidget()
+        layout = QVBoxLayout()
+        layout.addWidget(QLabel("Résumé des matchs"))
+        resumeMatch.setLayout(layout)
+        return resumeMatch
+
+    def classementJoueurTab(self):
+        classementJoueur = QWidget()
+        layout = QVBoxLayout()
+        layout.addWidget(QLabel("Classement des Joueurs"))
+        classementJoueur.setLayout(layout)
+        return classementJoueur
+
+    def visuClubsTab(self):
+        """
+        Méthode définissant l'affichage des fiches des clubs.
+        """
+        visuClubs = QWidget()  # Création du widget correspondant à la visualisation des fiches
+        # On crée un layout pour disposer les boutons et un second pour contenir les fiches des clubs stackées les unes
+        # sur les autres.
+        # On crée un troisième layout qui contiendra les deux premiers.
+        layout = QHBoxLayout()
+        bouton_layout = QVBoxLayout()
+        self.stacked_layout = QStackedLayout()
+        bouton_layout.setContentsMargins(0, 0, 30, 0)
+        # On ajoute les layouts des boutons et des fiches au layout principal.
+        layout.addLayout(bouton_layout)
+        layout.addLayout(self.stacked_layout)
+        # Création des boutons, un par club.
+        for i, c in enumerate(self.champ.clubs):
+            btn = QPushButton(c.nom)
+            # On lie tous les boutons à un signal permettant de changer d'onglet actif.
+            if i == 0:
+                btn.pressed.connect(self.activate_tab_0)
+            elif i == 1:
+                btn.pressed.connect(self.activate_tab_1)
+            elif i == 2:
+                btn.pressed.connect(self.activate_tab_2)
+            elif i == 3:
+                btn.pressed.connect(self.activate_tab_3)
+            elif i == 4:
+                btn.pressed.connect(self.activate_tab_4)
+            elif i == 5:
+                btn.pressed.connect(self.activate_tab_5)
+            elif i == 6:
+                btn.pressed.connect(self.activate_tab_6)
+            elif i == 7:
+                btn.pressed.connect(self.activate_tab_7)
+            bouton_layout.addWidget(btn)  # Ajout des boutons au layout correspondant
+            self.texte_club(c.nom)  # Création du texte à afficher pour la fiche du club
+            self.stacked_layout.addWidget(QLabel(self.club_txt))  # Ajout de la fiche au layout stacké
+        # Définition du layout de notre widget
+        visuClubs.setLayout(layout)
+        return visuClubs
+
+    def activate_tab_0(self):
+        self.stacked_layout.setCurrentIndex(0)
+
+    def activate_tab_1(self):
+        self.stacked_layout.setCurrentIndex(1)
+
+    def activate_tab_2(self):
+        self.stacked_layout.setCurrentIndex(2)
+
+    def activate_tab_3(self):
+        self.stacked_layout.setCurrentIndex(3)
+
+    def activate_tab_4(self):
+        self.stacked_layout.setCurrentIndex(4)
+
+    def activate_tab_5(self):
+        self.stacked_layout.setCurrentIndex(5)
+
+    def activate_tab_6(self):
+        self.stacked_layout.setCurrentIndex(6)
+
+    def activate_tab_7(self):
+        self.stacked_layout.setCurrentIndex(7)
+
+    def texte_club(self, nom):
+        """
+        Méthode permettant d'afficher les données contenues dans les fiches des clubs.
+
+        nom : nom du club dont les données doivent être affichées.
+        """
+        self.club_txt = ""  # Effacement de ce qui était précédemment écrit dans la variable self.club_txt
+        f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\fiche de {nom}.txt", 'rt')  # Lecture du fichier
+        self.club_txt += f.read()  # Écriture dans la variable
+        f.close()
 
 
 app = QApplication(sys.argv)

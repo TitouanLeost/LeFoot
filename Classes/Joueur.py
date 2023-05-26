@@ -43,19 +43,23 @@ class Joueur():
         """
         Méthode simulant une faute
         """
+        # On détermine si le joueur reçoit un carton jaune (1) ou un carton rouge (2).
+        lf = [1, 1, 1, 1, 1, 1, 1, 1, 1, 2]
+        rd.shuffle(lf)
         if self.carton == 0:  # Si le joueur n'a pas encore de carton
-            # On détermine si le joueur reçoit un carton jaune (1) ou un carton rouge (2).
-            lf = [1, 1, 1, 1, 1, 1, 1, 1, 1, 2]
-            rd.shuffle(lf)
             self.carton = lf[0]
+            if lf[0] == 1:
+                print(f"{self.nom} reçoit un carton jaune.")
+            else:
+                print(f"{self.nom} reçoit un carton rouge.")
         elif self.carton == 1:  # Si le joueur a déjà un carton jaune
             # Le joueur reçoit nécessairement un carton rouge.
             self.carton = 2
             self.cpt_carton = 0  # On remet le compteur de matchs avec cartons à zéro
-        if self.carton == 1:
-            print(f"{self.nom} reçoit un carton jaune.")
-        elif self.carton == 2:
-            print(f"{self.nom} reçoit un carton rouge.")
+            if lf[0] == 1:
+                print(f"{self.nom} reçoit un second carton jaune et a donc un carton rouge.")
+            else:
+                print(f"{self.nom} reçoit un carton rouge.")
 
     def recuperation(self):
         """
