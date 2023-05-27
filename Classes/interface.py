@@ -4,7 +4,8 @@ import Championnat
 from Creation_BDD import creation_bdd, copie_bdd
 
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QComboBox, QVBoxLayout, QHBoxLayout, QGridLayout, QStackedLayout, QWidget, QLabel, QTabWidget, QStackedWidget
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QPushButton, QComboBox, QVBoxLayout, QHBoxLayout, QGridLayout,
+                             QStackedLayout, QWidget, QLabel, QTabWidget, QStackedWidget)
 
 
 class MainWindow(QMainWindow):
@@ -175,6 +176,8 @@ class VisuComplet(QMainWindow):
         # Création des widgets participants à l'affichage.
         selection_journee = QComboBox()  # QComboBox permettant de sélectionner la journée
         self.selection_match_stack = QStackedWidget()  # Création d'un stack de widget pour la sélection des matchs
+        selection_journee.setFixedHeight(30)
+        self.selection_match_stack.setFixedHeight(30)
 
         # Ajout des items dans les boites de sélection de la journée et du match.
         for i, j in enumerate(self.champ.journees_liste, start=1):
@@ -184,7 +187,10 @@ class VisuComplet(QMainWindow):
             for m in j.matchs:
                 selection_match.addItem(f"{m[0].nom} - {m[1].nom}")
                 self.texte_resume_match(m[0], m[1], i)  # Création du texte du résumé du match
-                self.stacked_layout_m.addWidget(QLabel(self.resume_txt))  # Ajout du résumé à l'affichage stacké
+                label = QLabel(self.resume_txt)
+                label.setContentsMargins(20, 15, 0, 0)
+                label.setAlignment(Qt.AlignTop)
+                self.stacked_layout_m.addWidget(label)  # Ajout du résumé à l'affichage stacké
             self.selection_match_stack.addWidget(selection_match)  # Ajout de la QComboBox des matchs au stack de widget
             # Sélection de l'affichage correspondant au match choisi dans la seconde boite de sélection.
             selection_match.currentIndexChanged.connect(self.match_index_changed)
@@ -200,10 +206,28 @@ class VisuComplet(QMainWindow):
         return resumeMatch
 
     def classementJoueurTab(self):
+        """
+        Méthode permettant d'afficher les classements des joueurs.
+        """
         classementJoueur = QWidget()
-        layout = QVBoxLayout()
-        layout.addWidget(QLabel("Classement des Joueurs"))
+        layout = QHBoxLayout()
+        classement = open("C:\WorkspacePython\LeFoot\Fichiers\\classement buteurs.txt", 'rt')
+        nom = open("C:\WorkspacePython\LeFoot\Fichiers\\nom buteurs.txt", 'rt')
+        buts = open("C:\WorkspacePython\LeFoot\Fichiers\\buts buteurs.txt", 'rt')
+        label_c = QLabel(classement.read())
+        label_n = QLabel(nom.read())
+        label_b = QLabel(buts.read())
+        label_c.setContentsMargins(0, 0, 40, 0)
+        label_n.setContentsMargins(0, 0, 40, 0)
+        label_b.setContentsMargins(0, 0, 40, 0)
+        layout.addWidget(label_c)
+        layout.addWidget(label_n)
+        layout.addWidget(label_b)
+        layout.addStretch(1)
         classementJoueur.setLayout(layout)
+        classement.close()
+        nom.close()
+        buts.close()
         return classementJoueur
 
     def visuClubsTab(self):
@@ -250,6 +274,7 @@ class VisuComplet(QMainWindow):
 
     def journee_index_changed(self, i):
         self.selection_match_stack.setCurrentIndex(i)
+        self.stacked_layout_m.setCurrentIndex(4 * i)
         self.index_journee = i
 
     def match_index_changed(self, i):

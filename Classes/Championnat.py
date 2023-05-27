@@ -16,7 +16,6 @@ class Championnat():
     def __str__(self):
         return f"{self.nom}"
 
-
     def remplissage(self, copie):
         """
         Méthode permettant le remplissage du championnat avec les clubs participant.
@@ -32,7 +31,6 @@ class Championnat():
                 c.remplissage_bdd()
                 self.clubs.append(c)
 
-
     def simuler(self):
         """
         Fonction permettant de simuler le déroulement complet du championnat.
@@ -46,7 +44,7 @@ class Championnat():
             print("=====================================================")
         self.score_final()  # Création de la liste des scores
         self.tableau_score()  # Affichage du score final
-
+        self.classement_buteurs()
 
     def tableau_score(self):
         """
@@ -61,14 +59,6 @@ class Championnat():
         for c in self.liste_scores[1::]:  # On parcourt la liste privée du gagnant
             print(f"{c} fini le championnat avec {c.score} points et {c.nb_buts} buts marqués.")
             fichier_score.write(f"{c} fini le championnat avec {c.score} points et {c.nb_buts} buts marqués.\n")
-        # Affichage du classement des trois meilleurs buteurs.
-        fichier_score.write("\n")
-        fichier_score.write("Les trois meilleurs buteurs du championnat sont :\n")
-        buteurs = self.classement_buteurs()
-        for j in buteurs:
-            fichier_score.write(f"    {j.prenom[0]}.{j.nom} | {j.club} avec {j.nb_buts} buts\n")
-        fichier_score.close()
-
 
     def score_final(self):
         """
@@ -80,18 +70,16 @@ class Championnat():
             self.liste_scores.append(c)
         self.liste_scores.sort(key=self.triage, reverse=True)  # Appelle à la fonction triage pour gérer le tri
 
-
     def triage(self, club):
         """
         Fonction permettant le triage des clubs en fonction de leur score puis de leur nombre de buts.
         """
         return club.score, club.nb_buts
 
-
     def classement_buteurs(self):
         """
         Fonction permettant de classer tous les buteurs du championnat par ordre décroissant de buts.
-        Renvoie la liste contenant les 3 meilleurs buteurs du championnat.
+        Enregistre le classement dans un fichier texte.
         """
         buteurs = []
         for c in self.clubs:
@@ -99,15 +87,51 @@ class Championnat():
                 if j.poste == "Attaquant" and j.nb_buts != 0:
                     buteurs.append(j)
         buteurs.sort(key=self.triage_buts, reverse=True)
-        return buteurs[0:3]
-
+        # Enregistrement des données en colonnes pour pouvoir faire un affichage propre sur l'interface.
+        classement = open("C:\WorkspacePython\LeFoot\Fichiers\\classement buteurs.txt", 'wt')
+        nom = open("C:\WorkspacePython\LeFoot\Fichiers\\nom buteurs.txt", 'wt')
+        buts = open("C:\WorkspacePython\LeFoot\Fichiers\\buts buteurs.txt", 'wt')
+        classement.write("CLASSEMENT \n\n")
+        nom.write("NOM \n\n")
+        buts.write("BUTS \n\n")
+        for i, j in enumerate(buteurs):
+            classement.write(f"#{i}\n")
+            nom.write(f"{j.nom}\n")
+            buts.write(f"{j.nb_buts}\n")
+        classement.close()
+        nom.close()
+        buts.close()
+        # columnNames = ("CLASSEMENT", "NOM", "BUTS")
+        # data = []
+        # for i, j in enumerate(buteurs):
+        #     classement = f"#{i}"
+        #     nom = j.nom
+        #     nb_buts = str(j.nb_buts)
+        #     data.append((classement, nom, nb_buts))
+        #
+        # columnSizes = [0, 0, 0]
+        # for column in range(3):
+        #     maxSize = len(columnNames[column])
+        #     for line in data:
+        #         maxSize = max(len(line[column]), maxSize)
+        #     columnSizes[column] = maxSize
+        #
+        # f = open("C:\WorkspacePython\LeFoot\Fichiers\\classement buteurs.txt", 'wt')
+        # f.write("CLASSEMENT" + " " * (columnSizes[0] + 5 - len("CLASSEMENT")))
+        # f.write("NOM" + " " * (columnSizes[1] + 5 - len("NOM")))
+        # f.write("BUTS" + " " * (columnSizes[2] + 5 - len("BUTS")))
+        # f.write("\n \n")
+        # for d in data:
+        #     f.write(f"{d[0]}" + " " * (columnSizes[0] + 5 - len(d[0])))
+        #     f.write(f"{d[1]}" + " " * (columnSizes[1] + 5 - len(d[1])))
+        #     f.write(f"{d[2]}" + " " * (columnSizes[2] + 5 - len(d[2])))
+        #     f.write("\n")
 
     def triage_buts(self, joueur):
         """
         Fonction permettant le triage des joueurs suivant leur nombre de buts.
         """
         return joueur.nb_buts
-
 
     def creation_fiche_clubs(self, final=True):
         """

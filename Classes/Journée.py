@@ -107,7 +107,6 @@ class Journee():
                     liste_buteurs.append([joueur, temps])
                 elif but == 0:
                     liste_arrets.append([joueur, temps])
-                    print("joueur :", joueur)
             elif a == "c2":
                 print(f"# Action de {c2} :")
                 but, joueur, temps = self.action(c2, c1, dom_c2, dom_c1, t)
