@@ -84,7 +84,7 @@ class Championnat():
         buteurs = []
         for c in self.clubs:
             for j in c:
-                if j.poste == "Attaquant" and j.nb_buts != 0:
+                if j.poste == "Attaquant":
                     buteurs.append(j)
         buteurs.sort(key=self.triage_buts, reverse=True)
         # Enregistrement des données en colonnes pour pouvoir faire un affichage propre sur l'interface.
@@ -96,7 +96,7 @@ class Championnat():
         nom.write("NOM \n\n")
         club.write("CLUB \n\n")
         buts.write("BUTS \n\n")
-        for i, j in enumerate(buteurs):
+        for i, j in enumerate(buteurs, start=1):
             classement.write(f"#{i}\n")
             nom.write(f"{j.nom}\n")
             club.write(f"{j.club}\n")
