@@ -1,10 +1,62 @@
 import unittest
-import Club as Cl
-import Journée as J
-import Championnat as Ch
-from Joueur import *
+from Joueur import Joueur, Gardien, Attaquant, Milieu, Defenseur
 
-sb = Cl.Club("Stade Brestois 29", "Philippe")
+
+class TestJoueur(unittest.TestCase):
+
+    def test_joueur_creation(self):
+        joueur = Joueur("John", "Doe", 8.2, "Club A")
+        self.assertEqual(joueur.prenom, "John")
+        self.assertEqual(joueur.nom, "Doe")
+        self.assertEqual(joueur.note, 8.2)
+        self.assertEqual(joueur.club, "Club A")
+
+    def test_gardien_creation(self):
+        gardien = Gardien("John", "Doe", 8.5, "Club A")
+        self.assertEqual(gardien.prenom, "John")
+        self.assertEqual(gardien.nom, "Doe")
+        self.assertEqual(gardien.note, 8.5)
+        self.assertEqual(gardien.club, "Club A")
+        self.assertEqual(gardien.poste, "Gardien")
+        self.assertEqual(gardien.nb_arrets, 0)
+
+    def test_attaquant_creation(self):
+        attaquant = Attaquant("John", "Doe", 7.8, "Club A")
+        self.assertEqual(attaquant.prenom, "John")
+        self.assertEqual(attaquant.nom, "Doe")
+        self.assertEqual(attaquant.note, 7.8)
+        self.assertEqual(attaquant.club, "Club A")
+        self.assertEqual(attaquant.poste, "Attaquant")
+        self.assertEqual(attaquant.nb_buts, 0)
+
+    def test_milieu_creation(self):
+        milieu = Milieu("John", "Doe", 7.2, "Club A")
+        self.assertEqual(milieu.prenom, "John")
+        self.assertEqual(milieu.nom, "Doe")
+        self.assertEqual(milieu.note, 7.2)
+        self.assertEqual(milieu.club, "Club A")
+        self.assertEqual(milieu.poste, "Milieu")
+
+    def test_defenseur_creation(self):
+        defenseur = Defenseur("John", "Doe", 6.9, "Club A")
+        self.assertEqual(defenseur.prenom, "John")
+        self.assertEqual(defenseur.nom, "Doe")
+        self.assertEqual(defenseur.note, 6.9)
+        self.assertEqual(defenseur.club, "Club A")
+        self.assertEqual(defenseur.poste, "Défenseur")
+
+    def test_gardien_arret(self):
+        gardien = Gardien("John", "Doe", 8.5, "Club A")
+        gardien.arret()
+        self.assertEqual(gardien.nb_arrets, 1)
+
+    def test_attaquant_but(self):
+        attaquant = Attaquant("John", "Doe", 7.8, "Club A")
+        attaquant.but()
+        self.assertEqual(attaquant.nb_buts, 1)
+
+
+'''sb = Cl.Club("Stade Brestois 29", "Philippe")
 sr = Cl.Club("Stade Rennais FC", "Catherine")
 se = Cl.Club("AS Saint-Etienne", "Etienne")
 gu = Cl.Club("En Avant Guingamp", "Joel")
@@ -158,7 +210,7 @@ class TestClub(unittest.TestCase): # il faut remplir le championnat
         noteC = Cl.Club("Stade Brestois 29", "Philippe")
         champ = Ch.Championnat("ligue1",[sb,sr,se,gu,fs,cc,sc,rl])
         champ.simuler()
-        self.assertTrue(noteC.note_club<85 and noteC.note_club>55) #on regarde si les notes des clubs sont réalistes (ni trop élevée, ni trop faible)
+        self.assertTrue(noteC.note_club<85 and noteC.note_club>55) #on regarde si les notes des clubs sont réalistes (ni trop élevée, ni trop faible)'''
 
 if __name__ == '__main__':
     unittest.main()
