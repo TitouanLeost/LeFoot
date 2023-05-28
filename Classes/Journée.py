@@ -139,12 +139,14 @@ class Journee():
         # On détermine l'issue du match et on attribue les points en conséquence.
         if but_c1 > but_c2:
             c1.victoire()
+            c2.nb_defaites += 1
             print(f"{c1} remporte le match contre {c2} avec un score de {but_c1} - {but_c2}.")
             print("----------------------------------------------------------------------------")
             f.write(f"<font color={c1.couleur}><b>{c1}</b></font> remporte le match contre "
                     f"<font color={c2.couleur}><b>{c2}</b></font> avec un score de <b>{but_c1} - {but_c2}</b>")
         elif but_c1 < but_c2:
             c2.victoire()
+            c1.nb_defaites += 1
             print(f"{c2} remporte le match contre {c1} avec un score de {but_c2} - {but_c1}.")
             print("----------------------------------------------------------------------------")
             f.write(f"<font color={c2.couleur}><b>{c2}</b></font> remporte le match contre "

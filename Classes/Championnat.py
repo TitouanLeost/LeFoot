@@ -47,22 +47,57 @@ class Championnat():
             print("=====================================================")
         self.score_final()  # Création de la liste des scores
         self.tableau_score()  # Affichage du score final
+        self.tableau_score_log()  # Enregistrement du tableau des scores
         self.classement_buteurs()  # Enregistrement du classement des buteurs
         self.classement_gardiens()  # Enregistrement du classement des gardiens
 
     def tableau_score(self):
         """
-        Fonction permettant d'afficher le tableau des scores en fin de championnat et de l'enregistrer dans un fichier.
+        Fonction permettant d'afficher le tableau des scores en fin de championnat.
         """
-        # Affichage personnalisé pour le gagnant.
-        fichier_score = open("C:\WorkspacePython\LeFoot\Fichiers\\fichier des scores finaux.txt", 'wt')
         c = self.liste_scores[0]
+        # Affichage personnalisé pour le gagnant.
         print(f"{c} remporte {self.nom} avec {c.score} points et {c.nb_buts} buts marqués !")
-        fichier_score.write(f"{c} remporte {self.nom} avec {c.score} points et {c.nb_buts} buts marqués !\n")
         # Affichage des scores des autres clubs dans l'ordre.
         for c in self.liste_scores[1::]:  # On parcourt la liste privée du gagnant
             print(f"{c} fini le championnat avec {c.score} points et {c.nb_buts} buts marqués.")
-            fichier_score.write(f"{c} fini le championnat avec {c.score} points et {c.nb_buts} buts marqués.\n")
+
+    def tableau_score_log(self):
+        """
+        Fonction permettant d'enregistrer le tableau des scores en fin de championnat.
+        """
+        # Enregistrement des données en colonnes pour pouvoir faire un affichage propre sur l'interface.
+        classement = open("C:\WorkspacePython\LeFoot\Fichiers\\classement clubs.txt", 'wt')
+        nom = open("C:\WorkspacePython\LeFoot\Fichiers\\nom clubs.txt", 'wt')
+        victoires = open("C:\WorkspacePython\LeFoot\Fichiers\\victoires clubs.txt", 'wt')
+        defaites = open("C:\WorkspacePython\LeFoot\Fichiers\\défaites clubs.txt", 'wt')
+        nuls = open("C:\WorkspacePython\LeFoot\Fichiers\\nuls clubs.txt", 'wt')
+        buts = open("C:\WorkspacePython\LeFoot\Fichiers\\buts clubs.txt", 'wt')
+        points = open("C:\WorkspacePython\LeFoot\Fichiers\\points clubs.txt", 'wt')
+        # Ecriture de la première ligne de chaques colonnes.
+        classement.write(f"CLASSEMENT\n\n")
+        nom.write(f"NOM\n\n")
+        victoires.write(f"VICTOIRES\n\n")
+        defaites.write(f"DEFAITES\n\n")
+        nuls.write(f"NULS\n\n")
+        buts.write(f"BUTS\n\n")
+        points.write(f"POINTS\n\n")
+        # Remplissage des colonnes.
+        for i, c in enumerate(self.liste_scores, start=1):
+            classement.write(f"#{i}\n")
+            nom.write(f"{c}\n")
+            victoires.write(f"{c.nb_victoires}\n")
+            defaites.write(f"{c.nb_defaites}\n")
+            nuls.write(f"{c.nb_nuls}\n")
+            buts.write(f"{c.nb_buts}\n")
+            points.write(f"{c.score}\n")
+        classement.close()
+        nom.close()
+        victoires.close()
+        defaites.close()
+        nuls.close()
+        buts.close()
+        points.close()
 
     def score_final(self):
         """
@@ -96,10 +131,12 @@ class Championnat():
         nom = open("C:\WorkspacePython\LeFoot\Fichiers\\nom buteurs.txt", 'wt')
         club = open("C:\WorkspacePython\LeFoot\Fichiers\\club buteurs.txt", 'wt')
         buts = open("C:\WorkspacePython\LeFoot\Fichiers\\buts buteurs.txt", 'wt')
+        # Ecriture de la première ligne de chaques colonnes.
         classement.write("CLASSEMENT \n\n")
         nom.write("NOM \n\n")
         club.write("CLUB \n\n")
         buts.write("BUTS \n\n")
+        # Remplissage des colonnes.
         for i, j in enumerate(buteurs, start=1):
             classement.write(f"#{i}\n")
             nom.write(f"{j.nom}\n")

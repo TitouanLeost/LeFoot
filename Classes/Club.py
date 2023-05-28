@@ -13,6 +13,9 @@ class Club(list):
         self.equipe = []
         self.score = 0
         self.nb_buts = 0
+        self.nb_victoires = 0
+        self.nb_defaites = 0
+        self.nb_nuls = 0
         self.note_club = 0
         self.note_equipe = 0
         self.match_realise_dom = []
@@ -126,10 +129,12 @@ class Club(list):
 
     def victoire(self):
         self.score += 3
+        self.nb_victoires += 1
 
 
     def nul(self):
         self.score += 1
+        self.nb_nuls += 1
 
 
     def ajout_match_realise(self, club, e):

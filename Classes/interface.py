@@ -125,7 +125,6 @@ class VisuComplet(QMainWindow):
         self.setWindowTitle("Visualisation finale")
         self.setMinimumSize(700, 300)
         self.champ = championnat
-        self.resultats_txt = ""
         self.resume_txt = ""
         self.club_txt = ""
         self.index_journee = 0
@@ -136,8 +135,7 @@ class VisuComplet(QMainWindow):
         tabs = QTabWidget()
 
         # Onglet des résultats du championnat
-        self.resultats()  # Création du texte à afficher pour les résultats
-        tab1 = QLabel(self.resultats_txt)
+        tab1 = self.resultats()
         tabs.addTab(tab1, "Résultats")
 
         # Onglet des résumés des matchs
@@ -158,9 +156,45 @@ class VisuComplet(QMainWindow):
         """
         Méthode permettant d'afficher les résultats finaux du championnat.
         """
-        f = open("C:\WorkspacePython\LeFoot\Fichiers\\fichier des scores finaux.txt", 'rt')
-        self.resultats_txt += f.read()
-        f.close()
+        resultats = QWidget()
+        layout = QHBoxLayout()
+        classement = open("C:\WorkspacePython\LeFoot\Fichiers\\classement clubs.txt", 'rt')
+        nom = open("C:\WorkspacePython\LeFoot\Fichiers\\nom clubs.txt", 'rt')
+        victoires = open("C:\WorkspacePython\LeFoot\Fichiers\\victoires clubs.txt", 'rt')
+        defaites = open("C:\WorkspacePython\LeFoot\Fichiers\\défaites clubs.txt", 'rt')
+        nuls = open("C:\WorkspacePython\LeFoot\Fichiers\\nuls clubs.txt", 'rt')
+        buts = open("C:\WorkspacePython\LeFoot\Fichiers\\buts clubs.txt", 'rt')
+        points = open("C:\WorkspacePython\LeFoot\Fichiers\\points clubs.txt", 'rt')
+        labels = []
+        label_c = QLabel(classement.read())
+        label_nom = QLabel(nom.read())
+        label_v = QLabel(victoires.read())
+        label_d = QLabel(defaites.read())
+        label_nuls = QLabel(nuls.read())
+        label_b = QLabel(buts.read())
+        label_p = QLabel(points.read())
+        labels.append(label_c)
+        labels.append(label_nom)
+        labels.append(label_v)
+        labels.append(label_d)
+        labels.append(label_nuls)
+        labels.append(label_b)
+        labels.append(label_p)
+        for l in labels:
+            l.setContentsMargins(0, 0, 20, 0)
+            l.setAlignment(Qt.AlignTop)
+            layout.addWidget(l)
+        layout.addStretch(1)  # On compacte l'affichage sur la gauche de l'écran
+        layout.setContentsMargins(10, 10, 0, 0)
+        resultats.setLayout(layout)
+        classement.close()
+        nom.close()
+        victoires.close()
+        defaites.close()
+        nuls.close()
+        buts.close()
+        points.close()
+        return resultats
 
     def resumeMatchTab(self):
         """
