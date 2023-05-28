@@ -38,3 +38,7 @@ def copie_bdd():
     cur = con.cursor()  # Création du curseur
     cur.execute("INSERT INTO reserve_joueurs SELECT * FROM joueurs")  # Copie des données
     con.commit()
+
+
+if __name__ == '__main__':
+    creation_bdd()

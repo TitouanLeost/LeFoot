@@ -90,16 +90,20 @@ class Championnat():
         # Enregistrement des données en colonnes pour pouvoir faire un affichage propre sur l'interface.
         classement = open("C:\WorkspacePython\LeFoot\Fichiers\\classement buteurs.txt", 'wt')
         nom = open("C:\WorkspacePython\LeFoot\Fichiers\\nom buteurs.txt", 'wt')
+        club = open("C:\WorkspacePython\LeFoot\Fichiers\\club buteurs.txt", 'wt')
         buts = open("C:\WorkspacePython\LeFoot\Fichiers\\buts buteurs.txt", 'wt')
         classement.write("CLASSEMENT \n\n")
         nom.write("NOM \n\n")
+        club.write("CLUB \n\n")
         buts.write("BUTS \n\n")
         for i, j in enumerate(buteurs):
             classement.write(f"#{i}\n")
             nom.write(f"{j.nom}\n")
+            club.write(f"{j.club}\n")
             buts.write(f"{j.nb_buts}\n")
         classement.close()
         nom.close()
+        club.close()
         buts.close()
         # columnNames = ("CLASSEMENT", "NOM", "BUTS")
         # data = []

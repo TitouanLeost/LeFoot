@@ -210,23 +210,29 @@ class VisuComplet(QMainWindow):
         Méthode permettant d'afficher les classements des joueurs.
         """
         classementJoueur = QWidget()
+        # Création d'un affichage en colonne
         layout = QHBoxLayout()
         classement = open("C:\WorkspacePython\LeFoot\Fichiers\\classement buteurs.txt", 'rt')
         nom = open("C:\WorkspacePython\LeFoot\Fichiers\\nom buteurs.txt", 'rt')
+        club = open("C:\WorkspacePython\LeFoot\Fichiers\\club buteurs.txt", 'rt')
         buts = open("C:\WorkspacePython\LeFoot\Fichiers\\buts buteurs.txt", 'rt')
-        label_c = QLabel(classement.read())
+        label_cla = QLabel(classement.read())
         label_n = QLabel(nom.read())
+        label_clu = QLabel(club.read())
         label_b = QLabel(buts.read())
-        label_c.setContentsMargins(0, 0, 40, 0)
+        label_cla.setContentsMargins(0, 0, 40, 0)
         label_n.setContentsMargins(0, 0, 40, 0)
+        label_clu.setContentsMargins(0, 0, 40, 0)
         label_b.setContentsMargins(0, 0, 40, 0)
-        layout.addWidget(label_c)
+        layout.addWidget(label_cla)
         layout.addWidget(label_n)
+        layout.addWidget(label_clu)
         layout.addWidget(label_b)
-        layout.addStretch(1)
+        layout.addStretch(1)  # On compacte l'affichage sur la gauche de l'écran
         classementJoueur.setLayout(layout)
         classement.close()
         nom.close()
+        club.close()
         buts.close()
         return classementJoueur
 
