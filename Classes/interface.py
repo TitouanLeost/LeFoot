@@ -129,6 +129,8 @@ class VisuComplet(QMainWindow):
         self.resume_txt = ""
         self.club_txt = ""
         self.index_journee = 0
+        self.index_match = 0
+        self.index_details = 0
 
         # Création des onglets de navigation
         tabs = QTabWidget()
@@ -189,13 +191,23 @@ class VisuComplet(QMainWindow):
                 self.texte_resume_match(m[0], m[1], i)  # Création du texte du résumé du match
                 label = ScrollLabel(self)
                 label.setText(self.resume_txt)
-                # label = QLabel(self.resume_txt)
                 label.setContentsMargins(20, 15, 0, 0)
                 label.setAlignment(Qt.AlignTop)
                 self.stacked_layout_m.addWidget(label)  # Ajout du résumé à l'affichage stacké
+                self.texte_details_match(m[0], m[1], i)  # Création du texte du résumé détaillé du match
+                label = ScrollLabel(self)
+                label.setText(self.resume_txt)
+                label.setContentsMargins(20, 15, 0, 0)
+                label.setAlignment(Qt.AlignTop)
+                self.stacked_layout_m.addWidget(label)  # Ajout du résumé détaillé à l'affichage stacké
             self.selection_match_stack.addWidget(selection_match)  # Ajout de la QComboBox des matchs au stack de widget
             # Sélection de l'affichage correspondant au match choisi dans la seconde boite de sélection.
             selection_match.currentIndexChanged.connect(self.match_index_changed)
+        selection_details = QComboBox()
+        selection_details.addItem("Résumé")
+        selection_details.addItem("Détails")
+        selection_details.setFixedHeight(30)
+        selection_details.currentIndexChanged.connect(self.details_index_changed)
 
         # Sélection de la QComboBox des matchs correspondant à la journée sélectionné dans la première boite de
         # sélection.
@@ -203,6 +215,7 @@ class VisuComplet(QMainWindow):
         # Ajout des deux boites de sélection au layout correspondant.
         bouton_layout.addWidget(selection_journee)
         bouton_layout.addWidget(self.selection_match_stack)
+        bouton_layout.addWidget(selection_details)
         # Définition du layout de notre widget.
         resumeMatch.setLayout(layout)
         return resumeMatch
@@ -281,12 +294,18 @@ class VisuComplet(QMainWindow):
         return visuClubs
 
     def journee_index_changed(self, i):
-        self.selection_match_stack.setCurrentIndex(i)
-        self.stacked_layout_m.setCurrentIndex(4 * i)
         self.index_journee = i
+        self.index_match = 0
+        self.selection_match_stack.setCurrentIndex(i)
+        self.stacked_layout_m.setCurrentIndex(8 * i + 2 * self.index_match + self.index_details)
 
     def match_index_changed(self, i):
-        self.stacked_layout_m.setCurrentIndex(self.index_journee * 4 + i)
+        self.index_match = i
+        self.stacked_layout_m.setCurrentIndex(8 * self.index_journee + 2 * i + self.index_details)
+
+    def details_index_changed(self, i):
+        self.index_details = i
+        self.stacked_layout_m.setCurrentIndex(8 * self.index_journee + 2 * self.index_match + i)
 
     def activate_buteurs(self):
         self.stacked_layout_cla.setCurrentIndex(0)
@@ -356,6 +375,20 @@ class VisuComplet(QMainWindow):
         self.stacked_layout_c.setCurrentIndex(7)
 
     def texte_resume_match(self, c1, c2, num):
+        """
+        Méthode permettant d'afficher le résumé du match ayant opposé les clubs c1 et c2.
+
+        c1 : club ayant jué à domicile.
+        c2 : club ayant joué à l'extérieur.
+        num : numéro de la journée à laquelle s'est déroulé le match.
+        """
+        self.resume_txt = ""  # Effacement de ce qui était précédemment écrit dans la variable self.club_txt
+        # Lecture du fichier.
+        f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {num}, match {c1.nom}-{c2.nom}.txt", 'rt')
+        self.resume_txt += f.read()  # Écriture dans la variable
+        f.close()
+
+    def texte_details_match(self, c1, c2, num):
         """
         Méthode permettant d'afficher le résumé du match ayant opposé les clubs c1 et c2.
 
