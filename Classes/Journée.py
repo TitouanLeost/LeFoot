@@ -63,8 +63,12 @@ class Journee():
                 i += 1
         if dom_c1 == 1:
             self.matchs.append([c1, c2])
+            f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {self.num}, match détaillé {c1.nom}-{c2.nom}.html",
+                     'wt')
         else:
             self.matchs.append([c2, c1])
+            f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {self.num}, match détaillé {c2.nom}-{c1.nom}.html",
+                     'wt')
 
         # On affiche les notes des équipes juste pour vérifier (Debug).
         c1.calcul_note_equipe()
@@ -80,6 +84,15 @@ class Journee():
         #print(f"dom_c1 = {dom_c1}")  # Debug
         #print(f"dom_c2 = {dom_c2}")
         print("")
+
+        f.write(f"L'équipe de <font color={c1.couleur}><b>{c1}</b></font> à une note de "
+                f"<b><font color={c1.couleur}>{c1.note_equipe:.2f}</font></b>.<br>")
+        f.write(f"L'équipe de <font color={c2.couleur}><b>{c2}</b></font> à une note de "
+                f"<b><font color={c2.couleur}>{c2.note_equipe:.2f}</font></b>.<br>")
+        f.write("<br>")
+        f.write(f"<b>{c1}</b> va avoir <font color={c1.couleur}><b>{nb_act_c1} actions</b></font>.<br>")
+        f.write(f"<b>{c2}</b> va avoir <font color={c2.couleur}><b>{nb_act_c2} actions</b></font>.<br>")
+        f.write("<br>")
 
         liste_actions = []
         liste_temps = []
@@ -100,7 +113,7 @@ class Journee():
             t = liste_temps.pop()  # On récupère la minute à laquelle se déroule l'action
             if a == "c1":
                 print(f"# Action de {c1} :")
-                but, joueur, temps = self.action(c1, c2, dom_c1, dom_c2, t)
+                but, joueur, temps = self.action(c1, c2, dom_c1, dom_c2, t, f)
                 if but == 1:
                     but_c1 += 1  # On met à jour le nombre de buts de c1 dans ce match
                     c1.nb_buts += 1  # On met à jour le nombre de buts totaux de c1 dans le championnat
@@ -109,7 +122,7 @@ class Journee():
                     liste_arrets.append([joueur, temps])
             elif a == "c2":
                 print(f"# Action de {c2} :")
-                but, joueur, temps = self.action(c2, c1, dom_c2, dom_c1, t)
+                but, joueur, temps = self.action(c2, c1, dom_c2, dom_c1, t, f)
                 if but == 1:
                     but_c2 += 1  # On met à jour le nombre de buts de c2 dans ce match
                     c2.nb_buts += 1  # On met à jour le nombre de buts totaux de c2 dans le championnat
@@ -128,26 +141,37 @@ class Journee():
             c1.victoire()
             print(f"{c1} remporte le match contre {c2} avec un score de {but_c1} - {but_c2}.")
             print("----------------------------------------------------------------------------")
+            f.write(f"<font color={c1.couleur}><b>{c1}</b></font> remporte le match contre "
+                    f"<font color={c2.couleur}><b>{c2}</b></font> avec un score de <b>{but_c1} - {but_c2}</b>")
         elif but_c1 < but_c2:
             c2.victoire()
             print(f"{c2} remporte le match contre {c1} avec un score de {but_c2} - {but_c1}.")
             print("----------------------------------------------------------------------------")
+            f.write(f"<font color={c2.couleur}><b>{c2}</b></font> remporte le match contre "
+                    f"<font color={c1.couleur}><b>{c1}</b></font> avec un score de <b>{but_c2} - {but_c1}</b>")
         else:
             c1.nul()
             c2.nul()
             print(f"{c1} et {c2} font un match nul avec {but_c1} partout.")
             print("----------------------------------------------------------------------------")
+            f.write(f"<font color={c1.couleur}><b>{c1}</b></font> et <font color={c2.couleur}><b>{c2}</b></font> "
+                    f"font un match nul avec <b>{but_c1}</b> partout")
 
-    def action(self, c1, c2, dom_c1, dom_c2, temps):
+        f.close()
+
+    def action(self, c1, c2, dom_c1, dom_c2, temps, f):
         """
-        Fonction qui simule une action de c1 contre c2
+        Méthode qui simule une action de c1 contre c2.
 
         c1 : club en attaque
         c2 : club en défense
         dom_c1 : domc1=1 si c1 est à domicile
         dom_c2 : domc2=1 si c2 est à domicile
         temps : minute à laquelle se déroule l'action
+        f : fichier dans lequel on enregistre le déroulement détaillé des actions
         """
+        f.write(f"<b>PHASE D'ACTION DE <font color={c1.couleur}>{c1.nom}</font></b> :<br>")
+
         note_att = 0
         note_def = 0
         # On détermine la note d'attaque de c1 et celle de défense de c2.
@@ -172,6 +196,13 @@ class Journee():
         print(f"Puissance attaque {c1} = {puis_att}")
         print(f"Puissance défense {c2} = {puis_def}")
 
+        f.write(f"> Note attaque <b>{c1} = <font color={c1.couleur}>{note_att:.0f}</font></b><br>")
+        f.write(f"----> Après randomisation : Puissance attaque <b>{c1} = "
+                f"<font color={c1.couleur}>{puis_att:.0f}</font></b><br>")
+        f.write(f"> Note défense <b>{c2} = <font color={c2.couleur}>{note_def:.0f}</font></b><br>")
+        f.write(f"----> Après randomisation : Puissance défense <b>{c2} = "
+                f"<font color={c2.couleur}>{puis_def:.0f}</font></b><br>")
+
         # On prend en compte la possibilité qu'un joueur se blesse et/ou qu'une faute soit commise.
         proba_blessure = rd.random()
         proba_faute = rd.random()
@@ -182,13 +213,14 @@ class Journee():
             while jb.poste != "Attaquant" and jb.poste != "Milieu":
                 ib = rd.randint(0, len(c1.equipe)-1)
                 jb = c1.equipe[ib]
-            jb.blessure()
+            jb.blessure(f)
             # On ajoute le joueur à la liste des blessés du match.
             if jb not in self.joueurs_blessures:
                 self.joueurs_blessures.append(jb)
             seuil_faute = 0.7  # Si un joueur est blessé, 30% de chance qu'il y ait faute
         else:  # Si personne ne se blesse
             seuil_faute = 0.9  # Si aucun joueur n'est blessé, 10% de chance qu'il y ait faute
+
         if proba_faute > seuil_faute:
             # On choisit le joueur qui commet la faute au hasard dans l'équipe défenseuse.
             i_f = rd.randint(0, len(c2.equipe)-1)
@@ -196,7 +228,7 @@ class Journee():
             while j_f.poste != "Attaquant" and j_f.poste != "Milieu":
                 i_f = rd.randint(0, len(c2.equipe)-1)
                 j_f = c2.equipe[i_f]
-            j_f.faute()
+            j_f.faute(f)
             # On ajoute le joueur à la liste de ceux ayant reçu un carton lors du match.
             if j_f not in self.joueurs_cartons:
                 self.joueurs_cartons.append(j_f)
@@ -206,7 +238,8 @@ class Journee():
 
         # On détermine l'issue de l'action.
         if puis_att > puis_def:
-            print(f"--> {c1} perce la défense de {c2}")
+            print(f"=> {c1} perce la défense de {c2}")
+            f.write(f"=> <b>{c1}</b> perce la défense de <b>{c2}</b><br>")
             # On choisit un joueur au hasard pour effectuer le tir final.
             i = rd.randint(0, len(c1.equipe)-1)
             j = c1.equipe[i]
@@ -222,22 +255,32 @@ class Journee():
             # Affichage des notes (debug).
             print("note_frappe :", note_frappe)
             print("note_arret :", note_arret)
+            f.write(f"<b>{j.prenom[0]}.{j.nom}</b> tir ! (Note de la frappe : "
+                    f"<font color={c1.couleur}><b>{note_frappe:.1f}</b></font>)<br>")
+            f.write(f"<b>{gardien.prenom[0]}.{gardien.nom}</b> plonge (Note de l'arrêt : "
+                    f"<font color={c2.couleur}><b>{note_arret:.1f}</b></font>)<br>")
 
             # On détermine l'issue du tir.
             if note_frappe > note_arret:
                 print(f"===> {j.prenom[0]}.{j.nom} marque un but pour {c1} à la {temps}ème minute !")
                 print("- - - - - - - -")
+                f.write(f"===> <b>{j.prenom[0]}.{j.nom} marque un but pour {c1} à la {temps}ème minute !</b><br>")
+                f.write("<br>")
                 j.but()
                 return 1, j, temps
             else:
                 print(f"===> {gardien.prenom[0]}.{gardien.nom} arrête le tir de {j.prenom[0]}.{j.nom}")
                 print("- - - - - - - -")
+                f.write(f"===> <b>{gardien.prenom[0]}.{gardien.nom} arrête le tir de {j.prenom[0]}.{j.nom}</b><br>")
+                f.write("<br>")
                 gardien.arret()
                 return 0, gardien, temps
 
         else:
             print(f"--> La défense de {c2} parvient à repousser l'offensive de {c1}")
             print("- - - - - - - -")
+            f.write(f"===> <b>La défense de {c2} parvient à repousser l'offensive de {c1}</b><br>")
+            f.write("<br>")
             return 2, 0, 0
 
     def score_journee(self):

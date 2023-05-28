@@ -9,6 +9,7 @@ class Club(list):
     def __init__(self, nom, entraineur):
         self.nom = nom
         self.entraineur = entraineur
+        self.couleur = '#000000'
         self.equipe = []
         self.score = 0
         self.nb_buts = 0

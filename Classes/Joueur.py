@@ -15,9 +15,11 @@ class Joueur():
         self.cpt_carton = 0
 
 
-    def blessure(self):
+    def blessure(self, f):
         """
-        Méthode simulant la blessure d'un joueur
+        Méthode simulant la blessure d'un joueur.
+
+        f : fichier dans lequel on enregistre les données.
         """
         if self.etat == 0:  # Si le joueur n'est pas encore blessé
             # On détermine le degré de sa blessure
@@ -38,10 +40,14 @@ class Joueur():
         self.note = (1 - (self.etat / 10)) * self.note_originale
         print(f"{self.nom} s'est blessé (degré de la blessure : {degre_blessure})\n"
               f". Note originale : {self.note_originale} /// Note : {self.note : .2}")
+        f.write(f"<font color='#127EC6'><b>{self.prenom[0]}.{self.nom}</b> ({self.club}) s'est blessé "
+                f"(degré de la blessure : {degre_blessure})</font><br>")
 
-    def faute(self):
+    def faute(self, f):
         """
-        Méthode simulant une faute
+        Méthode simulant une faute.
+
+        f : fichier dans lequel on enregistre les données.
         """
         # On détermine si le joueur reçoit un carton jaune (1) ou un carton rouge (2).
         lf = [1, 1, 1, 1, 1, 1, 1, 1, 1, 2]
@@ -49,17 +55,25 @@ class Joueur():
         if self.carton == 0:  # Si le joueur n'a pas encore de carton
             self.carton = lf[0]
             if lf[0] == 1:
-                print(f"{self.nom} reçoit un carton jaune.")
+                print(f"{self.nom} reçoit un carton jaune")
+                f.write(f"<font color='#FFC600'><b>{self.prenom[0]}.{self.nom} ({self.club})</b> "
+                        f"reçoit un carton jaune</font><br>")
             else:
-                print(f"{self.nom} reçoit un carton rouge.")
+                print(f"{self.nom} reçoit un carton rouge")
+                f.write(f"<font color='#FF0000'><b>{self.prenom[0]}.{self.nom} ({self.club})</b> "
+                        f"reçoit un carton rouge</font><br>")
         elif self.carton == 1:  # Si le joueur a déjà un carton jaune
             # Le joueur reçoit nécessairement un carton rouge.
             self.carton = 2
             self.cpt_carton = 0  # On remet le compteur de matchs avec cartons à zéro
             if lf[0] == 1:
-                print(f"{self.nom} reçoit un second carton jaune et a donc un carton rouge.")
+                print(f"{self.nom} reçoit un second carton jaune et a donc un carton rouge")
+                f.write(f"<font color='#FF0000'><b>{self.prenom[0]}.{self.nom} ({self.club})</b> "
+                        f"reçoit un second carton jaune et a donc un carton rouge</font><br>")
             else:
-                print(f"{self.nom} reçoit un carton rouge.")
+                print(f"{self.nom} reçoit un carton rouge")
+                f.write(f"<font color='#FF0000'><b>{self.prenom[0]}.{self.nom} ({self.club})</b> "
+                        f"reçoit un carton rouge</font><br>")
 
     def recuperation(self):
         """

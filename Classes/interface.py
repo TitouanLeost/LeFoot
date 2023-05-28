@@ -5,7 +5,7 @@ from Creation_BDD import creation_bdd, copie_bdd
 
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QPushButton, QComboBox, QVBoxLayout, QHBoxLayout, QGridLayout,
-                             QStackedLayout, QWidget, QLabel, QTabWidget, QStackedWidget)
+                             QStackedLayout, QWidget, QLabel, QTabWidget, QStackedWidget, QScrollArea)
 
 
 class MainWindow(QMainWindow):
@@ -187,7 +187,9 @@ class VisuComplet(QMainWindow):
             for m in j.matchs:
                 selection_match.addItem(f"{m[0].nom} - {m[1].nom}")
                 self.texte_resume_match(m[0], m[1], i)  # Création du texte du résumé du match
-                label = QLabel(self.resume_txt)
+                label = ScrollLabel(self)
+                label.setText(self.resume_txt)
+                # label = QLabel(self.resume_txt)
                 label.setContentsMargins(20, 15, 0, 0)
                 label.setAlignment(Qt.AlignTop)
                 self.stacked_layout_m.addWidget(label)  # Ajout du résumé à l'affichage stacké
@@ -243,6 +245,7 @@ class VisuComplet(QMainWindow):
         layout = QHBoxLayout()
         bouton_layout = QVBoxLayout()
         self.stacked_layout_c = QStackedLayout()
+        layout.setContentsMargins(10, 20, 0, 0)
         bouton_layout.setContentsMargins(0, 0, 30, 0)
         # On ajoute les layouts des boutons et des fiches au layout principal.
         layout.addLayout(bouton_layout)
@@ -269,7 +272,10 @@ class VisuComplet(QMainWindow):
                 btn.pressed.connect(self.activate_tab_7)
             bouton_layout.addWidget(btn)  # Ajout des boutons au layout correspondant
             self.texte_club(c.nom)  # Création du texte à afficher pour la fiche du club
-            self.stacked_layout_c.addWidget(QLabel(self.club_txt))  # Ajout de la fiche au layout stacké
+            label = QLabel(self.club_txt)
+            label.setAlignment(Qt.AlignTop)
+            self.stacked_layout_c.addWidget(label)  # Ajout de la fiche au layout stacké
+        bouton_layout.addStretch(1)
         # Définition du layout de notre widget
         visuClubs.setLayout(layout)
         return visuClubs
@@ -359,7 +365,7 @@ class VisuComplet(QMainWindow):
         """
         self.resume_txt = ""  # Effacement de ce qui était précédemment écrit dans la variable self.club_txt
         # Lecture du fichier.
-        f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {num}, match {c1.nom}-{c2.nom}.txt", 'rt')
+        f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {num}, match détaillé {c1.nom}-{c2.nom}.html", 'rt')
         self.resume_txt += f.read()  # Écriture dans la variable
         f.close()
 
@@ -373,6 +379,40 @@ class VisuComplet(QMainWindow):
         f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\fiche de {nom}.txt", 'rt')  # Lecture du fichier
         self.club_txt += f.read()  # Écriture dans la variable
         f.close()
+
+
+class ScrollLabel(QScrollArea):
+
+    # constructor
+    def __init__(self, *args, **kwargs):
+        QScrollArea.__init__(self, *args, **kwargs)
+
+        # making widget resizable
+        self.setWidgetResizable(True)
+
+        # making qwidget object
+        content = QWidget(self)
+        self.setWidget(content)
+
+        # vertical box layout
+        lay = QVBoxLayout(content)
+
+        # creating label
+        self.label = QLabel(content)
+
+        # setting alignment to the text
+        self.label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+
+        # making label multi-line
+        self.label.setWordWrap(True)
+
+        # adding label to the layout
+        lay.addWidget(self.label)
+
+    # the setText method
+    def setText(self, text):
+        # setting text to the label
+        self.label.setText(text)
 
 
 app = QApplication(sys.argv)

@@ -12,6 +12,7 @@ class Championnat():
         self.journees = 14
         self.journees_liste = []
         self.liste_scores = []
+        self.liste_couleur = ['#FF5733', '#F89107', '#88D30C', '#0DE915', '#0BC9DA', '#850BDA', '#BF0CCA', '#EE0899']
 
     def __str__(self):
         return f"{self.nom}"
@@ -23,12 +24,14 @@ class Championnat():
         copie : paramètre permettant de spécifier si le championnat doit être relancé avec les mêmes équipes ou non.
         """
         if copie == True:
-            for c in self.liste_clubs:
+            for i, c in enumerate(self.liste_clubs):
                 c.remplissage_copie_bdd()
+                c.couleur = self.liste_couleur[i]
                 self.clubs.append(c)
         else:
-            for c in self.liste_clubs:
+            for i, c in enumerate(self.liste_clubs):
                 c.remplissage_bdd()
+                c.couleur = self.liste_couleur[i]
                 self.clubs.append(c)
 
     def simuler(self):
