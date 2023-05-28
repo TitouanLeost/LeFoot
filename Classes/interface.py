@@ -210,30 +210,26 @@ class VisuComplet(QMainWindow):
         Méthode permettant d'afficher les classements des joueurs.
         """
         classementJoueur = QWidget()
-        # Création d'un affichage en colonne
-        layout = QHBoxLayout()
-        classement = open("C:\WorkspacePython\LeFoot\Fichiers\\classement buteurs.txt", 'rt')
-        nom = open("C:\WorkspacePython\LeFoot\Fichiers\\nom buteurs.txt", 'rt')
-        club = open("C:\WorkspacePython\LeFoot\Fichiers\\club buteurs.txt", 'rt')
-        buts = open("C:\WorkspacePython\LeFoot\Fichiers\\buts buteurs.txt", 'rt')
-        label_cla = QLabel(classement.read())
-        label_n = QLabel(nom.read())
-        label_clu = QLabel(club.read())
-        label_b = QLabel(buts.read())
-        label_cla.setContentsMargins(0, 0, 40, 0)
-        label_n.setContentsMargins(0, 0, 40, 0)
-        label_clu.setContentsMargins(0, 0, 40, 0)
-        label_b.setContentsMargins(0, 0, 40, 0)
-        layout.addWidget(label_cla)
-        layout.addWidget(label_n)
-        layout.addWidget(label_clu)
-        layout.addWidget(label_b)
-        layout.addStretch(1)  # On compacte l'affichage sur la gauche de l'écran
+        # On crée un layout pour disposer les boutons et un second pour contenir les fiches des clubs stackées les unes
+        # sur les autres.
+        # On crée un troisième layout qui contiendra les deux premiers.
+        layout = QVBoxLayout()
+        bouton_layout = QHBoxLayout()
+        self.stacked_layout_cla = QStackedLayout()
+        # On ajoute les layouts des boutons et des fiches au layout principal.
+        layout.addLayout(bouton_layout)
+        layout.addLayout(self.stacked_layout_cla)
+        # Création des boutons.
+        btn = QPushButton("Buteurs")
+        btn.pressed.connect(self.activate_buteurs)
+        bouton_layout.addWidget(btn)
+        btn = QPushButton("Gardiens")
+        btn.pressed.connect(self.activate_gardiens)
+        bouton_layout.addWidget(btn)
+        # Création de l'affichage des classements.
+        self.stacked_layout_cla.addWidget(self.classement_poste("buteurs"))
+        self.stacked_layout_cla.addWidget(self.classement_poste("gardiens"))
         classementJoueur.setLayout(layout)
-        classement.close()
-        nom.close()
-        club.close()
-        buts.close()
         return classementJoueur
 
     def visuClubsTab(self):
@@ -285,6 +281,49 @@ class VisuComplet(QMainWindow):
 
     def match_index_changed(self, i):
         self.stacked_layout_m.setCurrentIndex(self.index_journee * 4 + i)
+
+    def activate_buteurs(self):
+        self.stacked_layout_cla.setCurrentIndex(0)
+
+    def activate_gardiens(self):
+        self.stacked_layout_cla.setCurrentIndex(1)
+
+    def classement_poste(self, poste):
+        """
+        Méthode permettant de générer l'affichage en colonne des classements des buteurs ou des gardiens.
+
+        poste : "buteurs" ou "gardiens".
+        """
+        widget = QWidget()
+        # Création d'un affichage en colonne
+        layout = QHBoxLayout()
+        classement = open(f"C:\WorkspacePython\LeFoot\Fichiers\\classement {poste}.txt", 'rt')
+        nom = open(f"C:\WorkspacePython\LeFoot\Fichiers\\nom {poste}.txt", 'rt')
+        club = open(f"C:\WorkspacePython\LeFoot\Fichiers\\club {poste}.txt", 'rt')
+        if poste == "buteurs":
+            buts = open(f"C:\WorkspacePython\LeFoot\Fichiers\\buts {poste}.txt", 'rt')
+        else:
+            buts = open(f"C:\WorkspacePython\LeFoot\Fichiers\\arrets {poste}.txt", 'rt')
+        labels = []
+        label_cla = QLabel(classement.read())
+        label_n = QLabel(nom.read())
+        label_clu = QLabel(club.read())
+        label_b = QLabel(buts.read())
+        labels.append(label_cla)
+        labels.append(label_n)
+        labels.append(label_clu)
+        labels.append(label_b)
+        for l in labels:
+            l.setContentsMargins(0, 0, 40, 0)
+            l.setAlignment(Qt.AlignTop)
+            layout.addWidget(l)
+        layout.addStretch(1)  # On compacte l'affichage sur la gauche de l'écran
+        widget.setLayout(layout)
+        classement.close()
+        nom.close()
+        club.close()
+        buts.close()
+        return widget
 
     def activate_tab_0(self):
         self.stacked_layout_c.setCurrentIndex(0)

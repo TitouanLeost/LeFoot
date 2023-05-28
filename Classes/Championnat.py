@@ -44,7 +44,8 @@ class Championnat():
             print("=====================================================")
         self.score_final()  # Création de la liste des scores
         self.tableau_score()  # Affichage du score final
-        self.classement_buteurs()
+        self.classement_buteurs()  # Enregistrement du classement des buteurs
+        self.classement_gardiens()  # Enregistrement du classement des gardiens
 
     def tableau_score(self):
         """
@@ -105,37 +106,48 @@ class Championnat():
         nom.close()
         club.close()
         buts.close()
-        # columnNames = ("CLASSEMENT", "NOM", "BUTS")
-        # data = []
-        # for i, j in enumerate(buteurs):
-        #     classement = f"#{i}"
-        #     nom = j.nom
-        #     nb_buts = str(j.nb_buts)
-        #     data.append((classement, nom, nb_buts))
-        #
-        # columnSizes = [0, 0, 0]
-        # for column in range(3):
-        #     maxSize = len(columnNames[column])
-        #     for line in data:
-        #         maxSize = max(len(line[column]), maxSize)
-        #     columnSizes[column] = maxSize
-        #
-        # f = open("C:\WorkspacePython\LeFoot\Fichiers\\classement buteurs.txt", 'wt')
-        # f.write("CLASSEMENT" + " " * (columnSizes[0] + 5 - len("CLASSEMENT")))
-        # f.write("NOM" + " " * (columnSizes[1] + 5 - len("NOM")))
-        # f.write("BUTS" + " " * (columnSizes[2] + 5 - len("BUTS")))
-        # f.write("\n \n")
-        # for d in data:
-        #     f.write(f"{d[0]}" + " " * (columnSizes[0] + 5 - len(d[0])))
-        #     f.write(f"{d[1]}" + " " * (columnSizes[1] + 5 - len(d[1])))
-        #     f.write(f"{d[2]}" + " " * (columnSizes[2] + 5 - len(d[2])))
-        #     f.write("\n")
 
     def triage_buts(self, joueur):
         """
-        Fonction permettant le triage des joueurs suivant leur nombre de buts.
+        Méthode permettant le triage des joueurs suivant leur nombre de buts.
         """
         return joueur.nb_buts
+
+    def classement_gardiens(self):
+        """
+        Méthode permettant de classer tous les gardiens du championnat par ordre décroissant d'arrêts.
+        Enregistre le classement dans un fichier texte.
+        """
+        gardiens = []
+        for c in self.clubs:
+            for j in c:
+                if j.poste == "Gardien":
+                    gardiens.append(j)
+        gardiens.sort(key=self.triage_arrets, reverse=True)
+        # Enregistrement des données en colonnes pour pouvoir faire un affichage propre sur l'interface.
+        classement = open("C:\WorkspacePython\LeFoot\Fichiers\\classement gardiens.txt", 'wt')
+        nom = open("C:\WorkspacePython\LeFoot\Fichiers\\nom gardiens.txt", 'wt')
+        club = open("C:\WorkspacePython\LeFoot\Fichiers\\club gardiens.txt", 'wt')
+        buts = open("C:\WorkspacePython\LeFoot\Fichiers\\arrets gardiens.txt", 'wt')
+        classement.write("CLASSEMENT \n\n")
+        nom.write("NOM \n\n")
+        club.write("CLUB \n\n")
+        buts.write("ARRETS \n\n")
+        for i, j in enumerate(gardiens, start=1):
+            classement.write(f"#{i}\n")
+            nom.write(f"{j.nom}\n")
+            club.write(f"{j.club}\n")
+            buts.write(f"{j.nb_arrets}\n")
+        classement.close()
+        nom.close()
+        club.close()
+        buts.close()
+
+    def triage_arrets(self, joueur):
+        """
+        Méthode permettant le triage des joueurs suivant leur nombre d'arrêts.
+        """
+        return joueur.nb_arrets
 
     def creation_fiche_clubs(self, final=True):
         """
