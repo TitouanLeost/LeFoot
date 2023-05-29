@@ -55,12 +55,15 @@ class Championnat():
         """
         Fonction permettant d'afficher le tableau des scores en fin de championnat.
         """
+        f = open("C:\WorkspacePython\LeFoot\Fichiers\\fichier des scores finaux.txt", 'wt')
         c = self.liste_scores[0]
         # Affichage personnalisé pour le gagnant.
         print(f"{c} remporte {self.nom} avec {c.score} points et {c.nb_buts} buts marqués !")
+        f.write(f"{c} remporte {self.nom} avec {c.score} points et {c.nb_buts} buts marqués !")
         # Affichage des scores des autres clubs dans l'ordre.
         for c in self.liste_scores[1::]:  # On parcourt la liste privée du gagnant
             print(f"{c} fini le championnat avec {c.score} points et {c.nb_buts} buts marqués.")
+            f.write(f"{c} fini le championnat avec {c.score} points et {c.nb_buts} buts marqués.")
 
     def tableau_score_log(self):
         """
