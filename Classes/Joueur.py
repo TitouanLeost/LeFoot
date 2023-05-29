@@ -112,6 +112,8 @@ class Gardien(Joueur):
         super().__init__(prenom, nom, note, club)
         self.poste = "Gardien"
         self.nb_arrets = 0
+        self.tentatives_arrets = 0
+        self.efficacite = 0
 
     def __str__(self):
         return f"{self.prenom[0]}.{self.nom}, {self.poste} ({self.note_originale})"
@@ -119,18 +121,32 @@ class Gardien(Joueur):
     def arret(self):
         self.nb_arrets += 1
 
+    def calcul_efficacite(self):
+        if self.tentatives_arrets != 0:
+            self.efficacite = self.nb_arrets / self.tentatives_arrets
+        else:
+            self.efficacite = 0
+
 
 class Attaquant(Joueur):
     def __init__(self, prenom, nom, note, club):
         super().__init__(prenom, nom, note, club)
         self.poste = "Attaquant"
         self.nb_buts = 0
+        self.nb_tirs = 0
+        self.efficacite = 0
 
     def __str__(self):
         return f"{self.prenom[0]}.{self.nom}, {self.poste} ({self.note_originale})"
 
     def but(self):
         self.nb_buts += 1
+
+    def calcul_efficacite(self):
+        if self.nb_tirs != 0:
+            self.efficacite = self.nb_buts / self.nb_tirs
+        else:
+            self.efficacite = 0
 
 
 class Milieu(Joueur):

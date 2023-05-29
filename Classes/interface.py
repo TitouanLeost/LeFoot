@@ -135,7 +135,7 @@ class VisuComplet(QMainWindow):
         tabs = QTabWidget()
 
         # Onglet des résultats du championnat
-        tab1 = self.resultats()
+        tab1 = self.resultatsTab()
         tabs.addTab(tab1, "Résultats")
 
         # Onglet des résumés des matchs
@@ -150,21 +150,54 @@ class VisuComplet(QMainWindow):
         tab4 = self.visuClubsTab()
         tabs.addTab(tab4, "Visualiser les clubs")
 
+        # Onglet des analyses du championnat
+        tab5 = self.analysesTab()
+        tabs.addTab(tab5, "Analyses")
+
         self.setCentralWidget(tabs)
 
-    def resultats(self):
+    # Onglet des résultats.
+    def resultatsTab(self):
         """
-        Méthode permettant d'afficher les résultats finaux du championnat.
+        Méthode permettant de générer l'onglet des résultats.
+        """
+        fenetre = QWidget()  # Création du widget correspondant à la visualisation des résultats
+        layout = QVBoxLayout()  # Création du layout de la page
+        self.stacked_layout_r = QStackedLayout()  # Création d'un layout pour empiler les résultats des journées
+        label = QLabel(f"------==== CLASSEMENT FINAL DE {self.champ.nom} ====------")
+        label.setAlignment(Qt.AlignHCenter)
+        layout.addWidget(label)
+        tableau = self.resultats_journee(14)  # Création du tableau des scores final
+        layout.addWidget(tableau)  # Ajout du tableau au layout
+        layout.addSpacing(30)
+        selection = QComboBox()  # Création d'une boite de sélection pour les résultats de chaques journées
+        for i in range(1, len(self.champ.journees_liste)):
+            selection.addItem(f"Journée {i}")
+            tableau = self.resultats_journee(i)  # Création du tableau des scores de la journée
+            self.stacked_layout_r.addWidget(tableau)
+        selection.currentIndexChanged.connect(self.index_resultats)
+        layout.addWidget(selection)  # Ajout de la boite de sélection au layout
+        layout.addLayout(self.stacked_layout_r)  # Ajout des tableaux des scores par journées au layout
+        fenetre.setLayout(layout)  # Définition du layout de la fenêtre
+        return fenetre
+
+
+    def resultats_journee(self, num):
+        """
+        Méthode permettant d'afficher les résultats de la journée correspondante.
+
+        num : numéro de la journée correspondant aux résultats.
         """
         resultats = QWidget()
         layout = QHBoxLayout()
-        classement = open("C:\WorkspacePython\LeFoot\Fichiers\\classement clubs.txt", 'rt')
-        nom = open("C:\WorkspacePython\LeFoot\Fichiers\\nom clubs.txt", 'rt')
-        victoires = open("C:\WorkspacePython\LeFoot\Fichiers\\victoires clubs.txt", 'rt')
-        defaites = open("C:\WorkspacePython\LeFoot\Fichiers\\défaites clubs.txt", 'rt')
-        nuls = open("C:\WorkspacePython\LeFoot\Fichiers\\nuls clubs.txt", 'rt')
-        buts = open("C:\WorkspacePython\LeFoot\Fichiers\\buts clubs.txt", 'rt')
-        points = open("C:\WorkspacePython\LeFoot\Fichiers\\points clubs.txt", 'rt')
+        classement = open(f"C:\WorkspacePython\LeFoot\Fichiers\\classement clubs journée {num}.txt", 'rt')
+        nom = open(f"C:\WorkspacePython\LeFoot\Fichiers\\nom clubs journée {num}.txt", 'rt')
+        victoires = open(f"C:\WorkspacePython\LeFoot\Fichiers\\victoires clubs journée {num}.txt", 'rt')
+        defaites = open(f"C:\WorkspacePython\LeFoot\Fichiers\\défaites clubs journée {num}.txt", 'rt')
+        nuls = open(f"C:\WorkspacePython\LeFoot\Fichiers\\nuls clubs journée {num}.txt", 'rt')
+        buts = open(f"C:\WorkspacePython\LeFoot\Fichiers\\buts clubs journée {num}.txt", 'rt')
+        encaisses = open(f"C:\WorkspacePython\LeFoot\Fichiers\\encaissés clubs journée {num}.txt", 'rt')
+        points = open(f"C:\WorkspacePython\LeFoot\Fichiers\\points clubs journée {num}.txt", 'rt')
         labels = []
         label_c = QLabel(classement.read())
         label_nom = QLabel(nom.read())
@@ -172,6 +205,7 @@ class VisuComplet(QMainWindow):
         label_d = QLabel(defaites.read())
         label_nuls = QLabel(nuls.read())
         label_b = QLabel(buts.read())
+        label_e = QLabel(encaisses.read())
         label_p = QLabel(points.read())
         labels.append(label_c)
         labels.append(label_nom)
@@ -179,6 +213,7 @@ class VisuComplet(QMainWindow):
         labels.append(label_d)
         labels.append(label_nuls)
         labels.append(label_b)
+        labels.append(label_e)
         labels.append(label_p)
         for l in labels:
             l.setContentsMargins(0, 0, 20, 0)
@@ -193,9 +228,14 @@ class VisuComplet(QMainWindow):
         defaites.close()
         nuls.close()
         buts.close()
+        encaisses.close()
         points.close()
         return resultats
 
+    def index_resultats(self, i):
+        self.stacked_layout_r.setCurrentIndex(i)
+
+    # Onglet des résumés des matchs.
     def resumeMatchTab(self):
         """
         Méthode permettant d'afficher les résumés des matchs dans un onglet.
@@ -254,6 +294,49 @@ class VisuComplet(QMainWindow):
         resumeMatch.setLayout(layout)
         return resumeMatch
 
+    def journee_index_changed(self, i):
+        self.index_journee = i
+        self.index_match = 0
+        self.selection_match_stack.setCurrentIndex(i)
+        self.stacked_layout_m.setCurrentIndex(8 * i + 2 * self.index_match + self.index_details)
+
+    def match_index_changed(self, i):
+        self.index_match = i
+        self.stacked_layout_m.setCurrentIndex(8 * self.index_journee + 2 * i + self.index_details)
+
+    def details_index_changed(self, i):
+        self.index_details = i
+        self.stacked_layout_m.setCurrentIndex(8 * self.index_journee + 2 * self.index_match + i)
+
+    def texte_resume_match(self, c1, c2, num):
+        """
+        Méthode permettant d'afficher le résumé du match ayant opposé les clubs c1 et c2.
+
+        c1 : club ayant jué à domicile.
+        c2 : club ayant joué à l'extérieur.
+        num : numéro de la journée à laquelle s'est déroulé le match.
+        """
+        self.resume_txt = ""  # Effacement de ce qui était précédemment écrit dans la variable self.club_txt
+        # Lecture du fichier.
+        f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {num}, match {c1.nom}-{c2.nom}.txt", 'rt')
+        self.resume_txt += f.read()  # Écriture dans la variable
+        f.close()
+
+    def texte_details_match(self, c1, c2, num):
+        """
+        Méthode permettant d'afficher le résumé du match ayant opposé les clubs c1 et c2.
+
+        c1 : club ayant jué à domicile.
+        c2 : club ayant joué à l'extérieur.
+        num : numéro de la journée à laquelle s'est déroulé le match.
+        """
+        self.resume_txt = ""  # Effacement de ce qui était précédemment écrit dans la variable self.club_txt
+        # Lecture du fichier.
+        f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {num}, match détaillé {c1.nom}-{c2.nom}.html", 'rt')
+        self.resume_txt += f.read()  # Écriture dans la variable
+        f.close()
+
+    # Onglet des classements des joueurs.
     def classementJoueurTab(self):
         """
         Méthode permettant d'afficher les classements des joueurs.
@@ -281,6 +364,50 @@ class VisuComplet(QMainWindow):
         classementJoueur.setLayout(layout)
         return classementJoueur
 
+    def activate_buteurs(self):
+        self.stacked_layout_cla.setCurrentIndex(0)
+
+    def activate_gardiens(self):
+        self.stacked_layout_cla.setCurrentIndex(1)
+
+    def classement_poste(self, poste):
+        """
+        Méthode permettant de générer l'affichage en colonne des classements des buteurs ou des gardiens.
+
+        poste : "buteurs" ou "gardiens".
+        """
+        widget = QWidget()
+        # Création d'un affichage en colonne
+        layout = QHBoxLayout()
+        classement = open(f"C:\WorkspacePython\LeFoot\Fichiers\\classement {poste}.txt", 'rt')
+        nom = open(f"C:\WorkspacePython\LeFoot\Fichiers\\nom {poste}.txt", 'rt')
+        club = open(f"C:\WorkspacePython\LeFoot\Fichiers\\club {poste}.txt", 'rt')
+        if poste == "buteurs":
+            buts = open(f"C:\WorkspacePython\LeFoot\Fichiers\\buts {poste}.txt", 'rt')
+        else:
+            buts = open(f"C:\WorkspacePython\LeFoot\Fichiers\\arrets {poste}.txt", 'rt')
+        labels = []
+        label_cla = QLabel(classement.read())
+        label_n = QLabel(nom.read())
+        label_clu = QLabel(club.read())
+        label_b = QLabel(buts.read())
+        labels.append(label_cla)
+        labels.append(label_n)
+        labels.append(label_clu)
+        labels.append(label_b)
+        for l in labels:
+            l.setContentsMargins(0, 0, 40, 0)
+            l.setAlignment(Qt.AlignTop)
+            layout.addWidget(l)
+        layout.addStretch(1)  # On compacte l'affichage sur la gauche de l'écran
+        widget.setLayout(layout)
+        classement.close()
+        nom.close()
+        club.close()
+        buts.close()
+        return widget
+
+    # Onglet de visualisation des clubs.
     def visuClubsTab(self):
         """
         Méthode définissant l'affichage des fiches des clubs.
@@ -327,63 +454,6 @@ class VisuComplet(QMainWindow):
         visuClubs.setLayout(layout)
         return visuClubs
 
-    def journee_index_changed(self, i):
-        self.index_journee = i
-        self.index_match = 0
-        self.selection_match_stack.setCurrentIndex(i)
-        self.stacked_layout_m.setCurrentIndex(8 * i + 2 * self.index_match + self.index_details)
-
-    def match_index_changed(self, i):
-        self.index_match = i
-        self.stacked_layout_m.setCurrentIndex(8 * self.index_journee + 2 * i + self.index_details)
-
-    def details_index_changed(self, i):
-        self.index_details = i
-        self.stacked_layout_m.setCurrentIndex(8 * self.index_journee + 2 * self.index_match + i)
-
-    def activate_buteurs(self):
-        self.stacked_layout_cla.setCurrentIndex(0)
-
-    def activate_gardiens(self):
-        self.stacked_layout_cla.setCurrentIndex(1)
-
-    def classement_poste(self, poste):
-        """
-        Méthode permettant de générer l'affichage en colonne des classements des buteurs ou des gardiens.
-
-        poste : "buteurs" ou "gardiens".
-        """
-        widget = QWidget()
-        # Création d'un affichage en colonne
-        layout = QHBoxLayout()
-        classement = open(f"C:\WorkspacePython\LeFoot\Fichiers\\classement {poste}.txt", 'rt')
-        nom = open(f"C:\WorkspacePython\LeFoot\Fichiers\\nom {poste}.txt", 'rt')
-        club = open(f"C:\WorkspacePython\LeFoot\Fichiers\\club {poste}.txt", 'rt')
-        if poste == "buteurs":
-            buts = open(f"C:\WorkspacePython\LeFoot\Fichiers\\buts {poste}.txt", 'rt')
-        else:
-            buts = open(f"C:\WorkspacePython\LeFoot\Fichiers\\arrets {poste}.txt", 'rt')
-        labels = []
-        label_cla = QLabel(classement.read())
-        label_n = QLabel(nom.read())
-        label_clu = QLabel(club.read())
-        label_b = QLabel(buts.read())
-        labels.append(label_cla)
-        labels.append(label_n)
-        labels.append(label_clu)
-        labels.append(label_b)
-        for l in labels:
-            l.setContentsMargins(0, 0, 40, 0)
-            l.setAlignment(Qt.AlignTop)
-            layout.addWidget(l)
-        layout.addStretch(1)  # On compacte l'affichage sur la gauche de l'écran
-        widget.setLayout(layout)
-        classement.close()
-        nom.close()
-        club.close()
-        buts.close()
-        return widget
-
     def activate_tab_0(self):
         self.stacked_layout_c.setCurrentIndex(0)
 
@@ -408,34 +478,6 @@ class VisuComplet(QMainWindow):
     def activate_tab_7(self):
         self.stacked_layout_c.setCurrentIndex(7)
 
-    def texte_resume_match(self, c1, c2, num):
-        """
-        Méthode permettant d'afficher le résumé du match ayant opposé les clubs c1 et c2.
-
-        c1 : club ayant jué à domicile.
-        c2 : club ayant joué à l'extérieur.
-        num : numéro de la journée à laquelle s'est déroulé le match.
-        """
-        self.resume_txt = ""  # Effacement de ce qui était précédemment écrit dans la variable self.club_txt
-        # Lecture du fichier.
-        f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {num}, match {c1.nom}-{c2.nom}.txt", 'rt')
-        self.resume_txt += f.read()  # Écriture dans la variable
-        f.close()
-
-    def texte_details_match(self, c1, c2, num):
-        """
-        Méthode permettant d'afficher le résumé du match ayant opposé les clubs c1 et c2.
-
-        c1 : club ayant jué à domicile.
-        c2 : club ayant joué à l'extérieur.
-        num : numéro de la journée à laquelle s'est déroulé le match.
-        """
-        self.resume_txt = ""  # Effacement de ce qui était précédemment écrit dans la variable self.club_txt
-        # Lecture du fichier.
-        f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {num}, match détaillé {c1.nom}-{c2.nom}.html", 'rt')
-        self.resume_txt += f.read()  # Écriture dans la variable
-        f.close()
-
     def texte_club(self, nom):
         """
         Méthode permettant d'afficher les données contenues dans les fiches des clubs.
@@ -446,6 +488,29 @@ class VisuComplet(QMainWindow):
         f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\fiche de {nom}.txt", 'rt')  # Lecture du fichier
         self.club_txt += f.read()  # Écriture dans la variable
         f.close()
+
+    def analysesTab(self):
+        widget = QWidget()
+        layout = QVBoxLayout()
+        g = self.champ.donnees_analyse[0][0]
+        a = self.champ.donnees_analyse[1][0]
+        c1 = self.champ.donnees_analyse[2][0]
+        c2 = self.champ.donnees_analyse[3][0]
+        label = QLabel(f"<b><u>Le gardien le plus efficace :</u> {g.prenom[0]}.{g.nom}</b> ({g.club}) avec "
+                       f"<b>{g.efficacite * 100:.1f}%</b> de tirs arrêtés")
+        layout.addWidget(label)
+        label = QLabel(f"<b><u>L'attaquant le plus efficace :</u> {a.prenom[0]}.{a.nom}</b> ({a.club}) avec "
+                       f"<b>{a.efficacite * 100:.1f}%</b> de tirs marqués")
+        layout.addWidget(label)
+        label = QLabel(f"<b><u>La meilleur club en attaque :</u> <font color={c1.couleur}>{c1.nom}</font></b> avec "
+                       f"<b>{self.champ.donnees_analyse[2][1]}</b> attaques réussies")
+        layout.addWidget(label)
+        label = QLabel(f"<b><u>La meilleur club en défense :</u> <font color={c2.couleur}>{c2.nom}</font></b> avec "
+                       f"<b>{self.champ.donnees_analyse[3][1]}</b> défenses réussies")
+        layout.addWidget(label)
+
+        widget.setLayout(layout)
+        return widget
 
 
 class ScrollLabel(QScrollArea):
