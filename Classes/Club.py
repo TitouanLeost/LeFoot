@@ -12,6 +12,7 @@ class Club(list):
         self.couleur = '#000000'
         self.equipe = []
         self.score = 0
+        self.liste_score = []
         self.nb_buts = 0
         self.nb_buts_encaisses = 0
         self.nb_victoires = 0

@@ -160,6 +160,9 @@ class Journee():
             print("----------------------------------------------------------------------------")
             f.write(f"<font color={c1.couleur}><b>{c1}</b></font> et <font color={c2.couleur}><b>{c2}</b></font> "
                     f"font un match nul avec <b>{but_c1}</b> partout")
+        # Mise à jour de la liste des scores
+        c1.liste_score.append(c1.score)
+        c2.liste_score.append(c2.score)
 
         f.close()
 

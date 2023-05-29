@@ -6,6 +6,8 @@ from Creation_BDD import creation_bdd, copie_bdd
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QPushButton, QComboBox, QVBoxLayout, QHBoxLayout, QGridLayout,
                              QStackedLayout, QWidget, QLabel, QTabWidget, QStackedWidget, QScrollArea)
+import pyqtgraph as pg
+import numpy as np
 
 
 class MainWindow(QMainWindow):
@@ -153,6 +155,9 @@ class VisuComplet(QMainWindow):
         # Onglet des analyses du championnat
         tab5 = self.analysesTab()
         tabs.addTab(tab5, "Analyses")
+
+        tab6 = self.graphesTab()
+        tabs.addTab(tab6, "Graphes")
 
         self.setCentralWidget(tabs)
 
@@ -490,6 +495,9 @@ class VisuComplet(QMainWindow):
         f.close()
 
     def analysesTab(self):
+        """
+        Méthode permettant de créer l'onglet des analyses du championnat.
+        """
         widget = QWidget()
         layout = QVBoxLayout()
         g = self.champ.donnees_analyse[0][0]
@@ -511,6 +519,22 @@ class VisuComplet(QMainWindow):
 
         widget.setLayout(layout)
         return widget
+
+    def graphesTab(self):
+
+        self.graphWidget = pg.PlotWidget()
+        self.graphWidget.setBackground('w')
+        self.graphWidget.setTitle("Evolution des scores")
+        self.graphWidget.setLabel("left", "Score")
+        self.graphWidget.setLabel("bottom", "Journée")
+        self.graphWidget.addLegend()
+        x = np.arange(1, 15)
+
+        for c in self.champ.clubs:
+            pen = pg.mkPen(color=c.couleur, width=3)
+            self.graphWidget.plot(x, c.liste_score, name=c.nom, pen=pen)
+
+        return self.graphWidget
 
 
 class ScrollLabel(QScrollArea):
