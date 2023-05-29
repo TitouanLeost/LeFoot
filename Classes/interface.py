@@ -156,9 +156,6 @@ class VisuComplet(QMainWindow):
         tab5 = self.analysesTab()
         tabs.addTab(tab5, "Analyses")
 
-        tab6 = self.graphesTab()
-        tabs.addTab(tab6, "Graphes")
-
         self.setCentralWidget(tabs)
 
     # Onglet des résultats.
@@ -184,7 +181,7 @@ class VisuComplet(QMainWindow):
         selection.currentIndexChanged.connect(self.index_resultats)
         layout.addWidget(selection)  # Ajout de la boite de sélection au layout
         layout.addLayout(self.stacked_layout_r)  # Ajout des tableaux des scores par journées au layout
-        layout.addWidget(self.graphesTab())
+        layout.addWidget(self.graphe_evolution_scores())
         fenetre.setLayout(layout)  # Définition du layout de la fenêtre
         scroll.setWidget(fenetre)
         return scroll
@@ -239,6 +236,23 @@ class VisuComplet(QMainWindow):
         encaisses.close()
         points.close()
         return resultats
+
+    def graphe_evolution_scores(self):
+
+        graphWidget = pg.PlotWidget()
+        graphWidget.setMouseEnabled(x=False, y=False)
+        graphWidget.setBackground('w')
+        graphWidget.setTitle("Evolution des scores")
+        graphWidget.setLabel("left", "Score")
+        graphWidget.setLabel("bottom", "Journée")
+        graphWidget.addLegend()
+        x = np.arange(1, 15)
+
+        for c in self.champ.clubs:
+            pen = pg.mkPen(color=c.couleur, width=3)
+            graphWidget.plot(x, c.liste_score, name=c.nom, pen=pen)
+
+        return graphWidget
 
     def index_resultats(self, i):
         self.stacked_layout_r.setCurrentIndex(i)
@@ -522,23 +536,6 @@ class VisuComplet(QMainWindow):
 
         widget.setLayout(layout)
         return widget
-
-    def graphesTab(self):
-
-        graphWidget = pg.PlotWidget()
-        graphWidget.setMouseEnabled(x=False, y=False)
-        graphWidget.setBackground('w')
-        graphWidget.setTitle("Evolution des scores")
-        graphWidget.setLabel("left", "Score")
-        graphWidget.setLabel("bottom", "Journée")
-        graphWidget.addLegend()
-        x = np.arange(1, 15)
-
-        for c in self.champ.clubs:
-            pen = pg.mkPen(color=c.couleur, width=3)
-            graphWidget.plot(x, c.liste_score, name=c.nom, pen=pen)
-
-        return graphWidget
 
 
 class ScrollLabel(QScrollArea):
