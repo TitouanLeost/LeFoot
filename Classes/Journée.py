@@ -7,8 +7,8 @@ class Journee():
     def __init__(self, num, championnat):
         self.num = num
         self.matchs = []
-        self.clubs_complet = championnat.clubs.copy()  # liste contenant tous les clubs participant au championnat
-        self.clubs = championnat.clubs.copy()  # Liste contenant les clubs n'ayant pas encore joué sur la journée
+        self.clubs_complet = championnat.liste_clubs.copy()  # liste contenant tous les clubs participant au championnat
+        self.clubs = championnat.liste_clubs.copy()  # Liste contenant les clubs n'ayant pas encore joué sur la journée
         self.joueurs_cartons = []  # Liste contenant les joueurs ayant reçu un carton lors d'un match
         self.joueurs_blessures = []  # Liste contenant les joueurs s'étant blessé lors d'un match
 
@@ -71,8 +71,8 @@ class Journee():
                      'wt')
 
         # On affiche les notes des équipes juste pour vérifier (Debug).
-        c1.calcul_note_equipe()
-        c2.calcul_note_equipe()
+        c1.calcul_note_club()
+        c2.calcul_note_club()
         diff_note = c1.note_equipe - c2.note_equipe  # On calcule l'écart de note entre les équipes
         print(diff_note)  # Debug
         # On détermine le nb d'actions qu'auront chaques clubs en fonction de tirages aléatoires, de la différence
