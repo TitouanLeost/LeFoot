@@ -125,7 +125,7 @@ class VisuComplet(QMainWindow):
     def __init__(self, championnat):
         super().__init__()
         self.setWindowTitle("Visualisation finale")
-        self.setMinimumSize(700, 300)
+        self.setMinimumSize(900, 500)
         self.champ = championnat
         self.resume_txt = ""
         self.club_txt = ""
@@ -166,6 +166,7 @@ class VisuComplet(QMainWindow):
         """
         Méthode permettant de générer l'onglet des résultats.
         """
+        scroll = QScrollArea()
         fenetre = QWidget()  # Création du widget correspondant à la visualisation des résultats
         layout = QVBoxLayout()  # Création du layout de la page
         self.stacked_layout_r = QStackedLayout()  # Création d'un layout pour empiler les résultats des journées
@@ -183,8 +184,10 @@ class VisuComplet(QMainWindow):
         selection.currentIndexChanged.connect(self.index_resultats)
         layout.addWidget(selection)  # Ajout de la boite de sélection au layout
         layout.addLayout(self.stacked_layout_r)  # Ajout des tableaux des scores par journées au layout
+        layout.addWidget(self.graphesTab())
         fenetre.setLayout(layout)  # Définition du layout de la fenêtre
-        return fenetre
+        scroll.setWidget(fenetre)
+        return scroll
 
 
     def resultats_journee(self, num):
@@ -522,19 +525,20 @@ class VisuComplet(QMainWindow):
 
     def graphesTab(self):
 
-        self.graphWidget = pg.PlotWidget()
-        self.graphWidget.setBackground('w')
-        self.graphWidget.setTitle("Evolution des scores")
-        self.graphWidget.setLabel("left", "Score")
-        self.graphWidget.setLabel("bottom", "Journée")
-        self.graphWidget.addLegend()
+        graphWidget = pg.PlotWidget()
+        graphWidget.setMouseEnabled(x=False, y=False)
+        graphWidget.setBackground('w')
+        graphWidget.setTitle("Evolution des scores")
+        graphWidget.setLabel("left", "Score")
+        graphWidget.setLabel("bottom", "Journée")
+        graphWidget.addLegend()
         x = np.arange(1, 15)
 
         for c in self.champ.clubs:
             pen = pg.mkPen(color=c.couleur, width=3)
-            self.graphWidget.plot(x, c.liste_score, name=c.nom, pen=pen)
+            graphWidget.plot(x, c.liste_score, name=c.nom, pen=pen)
 
-        return self.graphWidget
+        return graphWidget
 
 
 class ScrollLabel(QScrollArea):
