@@ -3,9 +3,10 @@ import Club
 import Championnat
 from Creation_BDD import creation_bdd, copie_bdd
 
-from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtCore import QSize, Qt, QRect
+from PyQt5.QtGui import QMovie
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QPushButton, QComboBox, QVBoxLayout, QHBoxLayout, QGridLayout,
-                             QStackedLayout, QWidget, QLabel, QTabWidget, QStackedWidget, QScrollArea)
+                             QStackedLayout, QWidget, QLabel, QTabWidget, QStackedWidget, QScrollArea, )
 
 
 class MainWindow(QMainWindow):
@@ -24,14 +25,17 @@ class MainWindow(QMainWindow):
         # Mise en place du bouton permettant de créer le championnat.
         bouton_creer = QPushButton("Mise en place du championnat")
         layout.addWidget(bouton_creer)
+        bouton_creer.setStyleSheet("background: #F5792E")
         bouton_creer.clicked.connect(self.clique_bouton_creer)
         # Mise en place du bouton permettant de visualiser les fiches des clubs.
         self.bouton_visu = QPushButton("Visualiser les clubs")
+        self.bouton_visu.setStyleSheet("background: #F1EE1A")
         layout.addWidget(self.bouton_visu)
         self.bouton_visu.clicked.connect(self.clique_bouton_visu)
         self.bouton_visu.setDisabled(True)
         # Mise en place du bouton permettant de lancer la simulation.
         self.bouton_simu = QPushButton("Simuler")
+        self.bouton_simu.setStyleSheet("background: #3BF966")
         layout.addWidget(self.bouton_simu)
         self.bouton_simu.clicked.connect(self.clique_bouton_simu)
         self.bouton_simu.setDisabled(True)
