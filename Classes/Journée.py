@@ -67,8 +67,8 @@ class Journee():
             self.matchs.append([c2, c1])
 
         # On affiche les notes des équipes juste pour vérifier (Debug).
-        c1.calcul_note_equipe()
-        c2.calcul_note_equipe()
+        c1.calcul_note_club()
+        c2.calcul_note_club()
         diff_note = c1.note_equipe - c2.note_equipe  # On calcule l'écart de note entre les équipes
         print(diff_note)  # Debug
         # On détermine le nb d'actions qu'auront chaques clubs en fonction de tirages aléatoires, de la différence
