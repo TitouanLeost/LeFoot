@@ -3,11 +3,11 @@ import Club
 import Championnat
 from Creation_BDD import creation_bdd, copie_bdd
 
-from PyQt5.QtCore import QSize, Qt, QFileInfo, QSettings
+from PyQt5.QtCore import QSize, Qt, QTimer, QSettings
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QPushButton, QComboBox, QVBoxLayout, QHBoxLayout, QGridLayout,
                              QStackedLayout, QWidget, QLabel, QTabWidget, QStackedWidget, QScrollArea, QDialog,
-                             QLineEdit, qApp)
-from PyQt5.QtGui import QPixmap
+                             QLineEdit)
+from PyQt5.QtGui import QPixmap, QImage
 import pyqtgraph as pg
 import numpy as np
 
@@ -22,7 +22,6 @@ class MainWindow(QMainWindow):
 
         self.champ = None  # Variable d'instance permettant de stocker le championnat
         self.w = None  # Variable d'instance permettant de stocker une autre fenêtre
-        self.w1 = None  # Variable d'instance permettant de stocker une autre fenêtre
         self.setWindowTitle("LeFoot")
         self.setMinimumSize(QSize(500, 400))
 
@@ -192,11 +191,8 @@ class MainWindow(QMainWindow):
         self.champ.creation_fiche_clubs()  # Enregistrement des données des clubs dans des fichiers texte
         print("Simulation OK")  # Debug
         self.w = VisuComplet(self.champ)
-        self.w1 = Chargement()
-        self.w1.show()
         self.w.show()
         self.close()
-        self.w1.hide()
 
 
 class VisuClubs(QMainWindow):
@@ -716,27 +712,6 @@ class ScrollLabel(QScrollArea):
     def setText(self, text):
         # setting text to the label
         self.label.setText(text)
-
-
-class Chargement(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Chargement")
-        # self.setMinimumSize(800, 600)
-        widget = QLabel()
-        image = QPixmap(f"C:\WorkspacePython\LeFoot\Images\\Foot de rue saison 1 generique_056.jpg")
-        widget.setPixmap(image)
-        # for i in range(300):
-        #     if i < 10:
-        #         image = QPixmap(f"C:\WorkspacePython\LeFoot\Images\\Foot de rue saison 1 generique_00{i}.jpg")
-        #         widget.setPixmap(image)
-        #     elif 10 <= i <100:
-        #         image = QPixmap(f"C:\WorkspacePython\LeFoot\Images\\Foot de rue saison 1 generique_0{i}.jpg")
-        #         widget.setPixmap(image)
-        #     else:
-        #         image = QPixmap(f"C:\WorkspacePython\LeFoot\Images\\Foot de rue saison 1 generique_{i}.jpg")
-        #         widget.setPixmap(image)
-        self.setCentralWidget(widget)
 
 
 class CustomDialog(QDialog):
