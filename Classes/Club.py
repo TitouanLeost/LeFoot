@@ -4,25 +4,25 @@ from Joueur import *
 
 class Club(list):
     """
-    Classe gérant les informations relatives au club et contenant la liste des joueurs
+    Classe gérant les informations relatives au club et contenant la liste des joueurs.
     """
     def __init__(self, nom, entraineur):
         self.nom = nom
         self.entraineur = entraineur
-        self.couleur = '#000000'
-        self.equipe = []
-        self.score = 0
-        self.liste_score = []
+        self.couleur = '#000000'  # Couleur du club sur l'interface
+        self.equipe = []  # Equipe active du club (dont sont retirés les joueurs expulsés à la suite d'un carton rouge)
+        self.score = 0  # Nombre de points marqués par le club lors du championnat
+        self.liste_score = []  # Liste des points marqués au total par journées
         self.nb_buts = 0
         self.nb_buts_encaisses = 0
         self.nb_victoires = 0
         self.nb_defaites = 0
         self.nb_nuls = 0
         self.nb_cartons = 0
-        self.attaques_reussies = 0
-        self.defenses_reussies = 0
-        self.note_club = 0
-        self.note_equipe = 0
+        self.attaques_reussies = 0  # Attaques ayant percées la défense adverse
+        self.defenses_reussies = 0  # Attaques adverses ayant été repoussées par la défense du club
+        self.note_club = 0  # Note globale du club
+        self.note_equipe = 0  # Note de l'équipe active
         self.match_realise_dom = []
         self.match_realise_ext = []
 
@@ -43,23 +43,26 @@ class Club(list):
         # Mise en place de la connexion avec la database de sauvegarde.
         con2 = sqlite3.connect(f"C:\WorkspacePython\LeFoot\BDD\BDD_{self.nom}.db") # titouan
         # con2 = sqlite3.connect(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\BDD_{self.nom}.db")
-        #con = sqlite3.connect("C:\Users\hadrien dupuy\Desktop\ENSTA B\1A\2.4 projets\Projet informatique\BDD_joueurs.db")
         cur = con.cursor()  # Création du curseur.
         cur2 = con2.cursor()
         cur2.execute("CREATE TABLE effectif(id, prénom, nom, poste, note)")  # Création de la table de sauvegarde
 
         # Création de listes aléatoires contenant les futurs attaquants, défenseurs, milieux et gardiens du club.
-        attaquant = cur.execute("SELECT DISTINCT * FROM reserve_joueurs WHERE poste == 'Attaquant' ORDER BY random() LIMIT 3")
+        attaquant = cur.execute("SELECT DISTINCT * FROM reserve_joueurs "
+                                "WHERE poste == 'Attaquant' ORDER BY random() LIMIT 3")
         at = attaquant.fetchall()
-        defenseur = cur.execute("SELECT DISTINCT * FROM reserve_joueurs WHERE poste == 'Défenseur' ORDER BY random() LIMIT 3")
+        defenseur = cur.execute("SELECT DISTINCT * FROM reserve_joueurs "
+                                "WHERE poste == 'Défenseur' ORDER BY random() LIMIT 3")
         de = defenseur.fetchall()
-        milieu = cur.execute("SELECT DISTINCT * FROM reserve_joueurs WHERE poste == 'Milieu' ORDER BY random() LIMIT 4")
+        milieu = cur.execute("SELECT DISTINCT * FROM reserve_joueurs "
+                             "WHERE poste == 'Milieu' ORDER BY random() LIMIT 4")
         mi = milieu.fetchall()
-        gardien = cur.execute("SELECT DISTINCT * FROM reserve_joueurs WHERE poste == 'Gardien' ORDER BY random() LIMIT 1")
+        gardien = cur.execute("SELECT DISTINCT * FROM reserve_joueurs "
+                              "WHERE poste == 'Gardien' ORDER BY random() LIMIT 1")
         ga = gardien.fetchall()
 
         # Ajout des joueurs précédemment sélectionnés dans les effectifs du club.
-        # On retire ensuite les joueurs sélectionnés de la BDD.
+        # On retire ensuite les joueurs sélectionnés de la BDD reserve_joueurs.
         for j in at:
             joueur = Attaquant(j[1], j[2], j[4], self.nom)
             self.append(joueur)
@@ -106,9 +109,11 @@ class Club(list):
         Méthode permettant de copier les effectifs d'un club entre deux championnats pour simuler de nouveau
         le même championnat.
         """
-        con = sqlite3.connect(f"C:\WorkspacePython\LeFoot\BDD\BDD_{self.nom}.db") #titouan
+        con = sqlite3.connect(f"C:\WorkspacePython\LeFoot\BDD\BDD_{self.nom}.db") # titouan
         # con = sqlite3.connect(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\BDD_{self.nom}.db")
         cur = con.cursor()
+
+        # On sélectionne tous les joueurs de la table en les séparant par poste.
         attaquant = cur.execute("SELECT * FROM effectif WHERE poste == 'Attaquant'")
         at = attaquant.fetchall()
         defenseur = cur.execute("SELECT * FROM effectif WHERE poste == 'Défenseur'")
@@ -147,7 +152,7 @@ class Club(list):
 
     def ajout_match_realise(self, club, e):
         """
-        Fonction ajoutant les clubs qui ont joué contre le club à domicile ou à l'extérieur.
+        Méthode ajoutant les clubs qui ont joué contre le club à domicile ou à l'extérieur.
 
         club : club contre qui le match a été joué.
         e: e="dom" si le match s'est fait à domicile. e="ext" si le match s'est fait à l'extérieur.
@@ -172,13 +177,12 @@ class Club(list):
 
     def classement_buteurs_club(self):
         """
-        Fonction permettant de classer les buteurs du club par ordre décroissant de buts.
+        Méthode permettant de classer les buteurs du club par ordre décroissant de buts.
         Renvoie la liste triée des buteurs.
         """
         buteurs = []
         for j in self:
             if j.poste == "Attaquant" and j.nb_buts != 0:  # On prend tous les attaquants ayant marqué
-                attaquant = j
                 buteurs.append(j)
         return sorted(buteurs, key=self.triage, reverse=True)  # Utilisation de la fonction triage pour trier la liste
 
@@ -199,10 +203,11 @@ class Club(list):
         cpt = 0
         self.note_club = 0  # On remet la note à 0 pour être sûr
         if len(self) != 0:
+            # Pour chaque joueur du club, on ajoute sa note à celle du club.
             for j in self:
                 self.note_club += j.note
                 cpt += 1
-            self.note_club = self.note_club/cpt
+            self.note_club = self.note_club/cpt  # On divise par le nombre de joueur pour faire une moyenne
             fichier.write(f"La note du club {self.nom} est : {self.note_club:.1f}\n")
         else:
             fichier.write(f"Il n'y a aucun joueur dans le club {self.nom}\n")
@@ -215,10 +220,11 @@ class Club(list):
         cpt = 0
         self.note_club = 0  # On remet la note à 0 pour être sûr
         if len(self) != 0:
+            # Pour chaque joueur du club, on ajoute sa note à celle du club.
             for j in self:
                 self.note_club += j.note
                 cpt += 1
-            self.note_club = self.note_club/cpt
+            self.note_club = self.note_club/cpt  # On divise par le nombre de joueur pour faire une moyenne
             print(f"La note du club {self.nom} est : {self.note_club:.1f}")
         else:
             print(f"Il n'y a aucun joueur dans le club {self.nom}")
@@ -228,13 +234,11 @@ class Club(list):
         Méthode permettant le calcul de la note de l'équipe active.
         """
         self.note_equipe = 0  # On remet la note à 0 pour être sûr
+        # Pour chaque joueur de l'équipe active, on ajoute sa note à celle de l'équipe.
         for j in self.equipe:
             self.note_equipe += j.note
-        self.note_equipe = self.note_equipe/11
+        self.note_equipe = self.note_equipe/11  # On divise par 11 pour faire une moyenne
         print(f"La note de l'équipe active du club {self.nom} est : {self.note_equipe:.1f}")
-
-    def affichage_score(self):
-        print(f"{self.nom} à un score de {self.score}")
 
     def fiche_club(self, final):
         """
