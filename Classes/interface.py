@@ -18,7 +18,7 @@ class MainWindow(QMainWindow):
     """
     def __init__(self):
         super().__init__()
-        self.getSettingsValues()  # On récupère les valeurs des QLineEdit précedemment enregistrées
+        self.getSettingsValues()  # On récupère les valeurs des QLineEdit précédemment enregistrées
 
         self.champ = None  # Variable d'instance permettant de stocker le championnat
         self.w = None  # Variable d'instance permettant de stocker une autre fenêtre
@@ -163,7 +163,8 @@ class MainWindow(QMainWindow):
         cc = Club.Club(self.edit6.text(), "Charlie")
         sc = Club.Club(self.edit7.text(), "Jacob")
         rl = Club.Club(self.edit8.text(), "Simone")
-        self.champ = Championnat.Championnat(self.edit.text(), [sb, sr, se, gu, fs, cc, sc, rl])  # Création du championnat
+        # Création du championnat
+        self.champ = Championnat.Championnat(self.edit.text(), [sb, sr, se, gu, fs, cc, sc, rl])
         try:
             self.champ.remplissage(True)  # Remplissage des effectifs des clubs
         except:
@@ -347,7 +348,9 @@ class VisuComplet(QMainWindow):
         return resultats
 
     def graphe_evolution_scores(self):
-
+        """
+        Méthode permettant de tracer l'évolution des scores
+        """
         graphWidget = pg.PlotWidget()
         graphWidget.setMouseEnabled(x=False, y=False)
         graphWidget.setBackground('w')
@@ -355,8 +358,9 @@ class VisuComplet(QMainWindow):
         graphWidget.setLabel("left", "Score")
         graphWidget.setLabel("bottom", "Journée")
         graphWidget.addLegend()
-        x = np.arange(1, 15)
 
+        # On trace une courbe par club.
+        x = np.arange(1, 15)
         for c in self.champ.clubs:
             pen = pg.mkPen(color=c.couleur, width=3)
             graphWidget.plot(x, c.liste_score, name=c.nom, pen=pen)
@@ -405,9 +409,11 @@ class VisuComplet(QMainWindow):
                 label.setContentsMargins(20, 15, 0, 0)
                 label.setAlignment(Qt.AlignTop)
                 self.stacked_layout_m.addWidget(label)  # Ajout du résumé détaillé à l'affichage stacké
+
             self.selection_match_stack.addWidget(selection_match)  # Ajout de la QComboBox des matchs au stack de widget
             # Sélection de l'affichage correspondant au match choisi dans la seconde boite de sélection.
             selection_match.currentIndexChanged.connect(self.match_index_changed)
+
         selection_details = QComboBox()
         selection_details.addItem("Résumé")
         selection_details.addItem("Détails")
@@ -620,6 +626,7 @@ class VisuComplet(QMainWindow):
         self.club_txt += f.read()  # Écriture dans la variable
         f.close()
 
+    # Onglet des analyses.
     def analysesTab(self):
         """
         Méthode permettant de créer l'onglet des analyses du championnat.
@@ -681,6 +688,10 @@ class VisuComplet(QMainWindow):
 
 
 class ScrollLabel(QScrollArea):
+    """
+    Classe utilisée pour créer une zone scrollable pour l'affichage des résumés détaillés des matchs.
+    Cette classe est issue d'un code que nous avons trouvé sur internet, nous n'en sommes donc pas les auteurs.
+    """
 
     # constructor
     def __init__(self, *args, **kwargs):
