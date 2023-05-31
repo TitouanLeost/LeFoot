@@ -13,7 +13,7 @@ class Championnat():
         self.journees_liste = []
         self.liste_scores = []
         self.liste_couleur = ['#FF5733', '#F89107', '#88D30C', '#0DE915', '#0BC9DA', '#850BDA', '#BF0CCA', '#EE0899']
-        self.donnees_analyse = [[0, 0], [0, 0], [0, 0], [0, 0]]
+        self.donnees_analyse = [[0, 0], [0, 0], [0, 0], [0, 0], []]
 
     def __str__(self):
         return f"{self.nom}"
@@ -57,8 +57,8 @@ class Championnat():
         """
         Fonction permettant d'afficher le tableau des scores en fin de championnat.
         """
-        # f = open("C:\WorkspacePython\LeFoot\Fichiers\\fichier des scores finaux.txt", 'wt') # titouan
-        f = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\fichier des scores finaux.txt", 'wt')
+        f = open("C:\WorkspacePython\LeFoot\Fichiers\\fichier des scores finaux.txt", 'wt') # titouan
+        # f = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\fichier des scores finaux.txt", 'wt')
         c = self.liste_scores[0]
         # Affichage personnalisé pour le gagnant.
         print(f"{c} remporte {self.nom} avec {c.score} points et {c.nb_buts} buts marqués !")
@@ -76,23 +76,23 @@ class Championnat():
         """
         # Enregistrement des données en colonnes pour pouvoir faire un affichage propre sur l'interface.
         # Titouan
-        # classement = open(f"C:\WorkspacePython\LeFoot\Fichiers\\classement clubs journée {num}.txt", 'wt')
-        # nom = open(f"C:\WorkspacePython\LeFoot\Fichiers\\nom clubs journée {num}.txt", 'wt')
-        # victoires = open(f"C:\WorkspacePython\LeFoot\Fichiers\\victoires clubs journée {num}.txt", 'wt')
-        # defaites = open(f"C:\WorkspacePython\LeFoot\Fichiers\\défaites clubs journée {num}.txt", 'wt')
-        # nuls = open(f"C:\WorkspacePython\LeFoot\Fichiers\\nuls clubs journée {num}.txt", 'wt')
-        # buts = open(f"C:\WorkspacePython\LeFoot\Fichiers\\buts clubs journée {num}.txt", 'wt')
-        # encaisses = open(f"C:\WorkspacePython\LeFoot\Fichiers\\encaissés clubs journée {num}.txt", 'wt')
-        # points = open(f"C:\WorkspacePython\LeFoot\Fichiers\\points clubs journée {num}.txt", 'wt')
+        classement = open(f"C:\WorkspacePython\LeFoot\Fichiers\\classement clubs journée {num}.txt", 'wt')
+        nom = open(f"C:\WorkspacePython\LeFoot\Fichiers\\nom clubs journée {num}.txt", 'wt')
+        victoires = open(f"C:\WorkspacePython\LeFoot\Fichiers\\victoires clubs journée {num}.txt", 'wt')
+        defaites = open(f"C:\WorkspacePython\LeFoot\Fichiers\\défaites clubs journée {num}.txt", 'wt')
+        nuls = open(f"C:\WorkspacePython\LeFoot\Fichiers\\nuls clubs journée {num}.txt", 'wt')
+        buts = open(f"C:\WorkspacePython\LeFoot\Fichiers\\buts clubs journée {num}.txt", 'wt')
+        encaisses = open(f"C:\WorkspacePython\LeFoot\Fichiers\\encaissés clubs journée {num}.txt", 'wt')
+        points = open(f"C:\WorkspacePython\LeFoot\Fichiers\\points clubs journée {num}.txt", 'wt')
         # Hadrien
-        classement = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\classement clubs journée {num}.txt", 'wt')
-        nom = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\nom clubs journée {num}.txt", 'wt')
-        victoires = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\victoires clubs journée {num}.txt", 'wt')
-        defaites = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\défaites clubs journée {num}.txt", 'wt')
-        nuls = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\nuls clubs journée {num}.txt", 'wt')
-        buts = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\buts clubs journée {num}.txt", 'wt')
-        encaisses = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\encaissés clubs journée {num}.txt", 'wt')
-        points = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\points clubs journée {num}.txt", 'wt')
+        # classement = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\classement clubs journée {num}.txt", 'wt')
+        # nom = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\nom clubs journée {num}.txt", 'wt')
+        # victoires = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\victoires clubs journée {num}.txt", 'wt')
+        # defaites = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\défaites clubs journée {num}.txt", 'wt')
+        # nuls = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\nuls clubs journée {num}.txt", 'wt')
+        # buts = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\buts clubs journée {num}.txt", 'wt')
+        # encaisses = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\encaissés clubs journée {num}.txt", 'wt')
+        # points = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\points clubs journée {num}.txt", 'wt')
         # Ecriture de la première ligne de chaques colonnes.
         classement.write("CLASSEMENT\n\n")
         nom.write("NOM\n\n")
@@ -150,15 +150,15 @@ class Championnat():
         buteurs.sort(key=self.triage_buts, reverse=True)
         # Enregistrement des données en colonnes pour pouvoir faire un affichage propre sur l'interface.
         # Titouan
-        # classement = open("C:\WorkspacePython\LeFoot\Fichiers\\classement buteurs.txt", 'wt')
-        # nom = open("C:\WorkspacePython\LeFoot\Fichiers\\nom buteurs.txt", 'wt')
-        # club = open("C:\WorkspacePython\LeFoot\Fichiers\\club buteurs.txt", 'wt')
-        # buts = open("C:\WorkspacePython\LeFoot\Fichiers\\buts buteurs.txt", 'wt')
+        classement = open("C:\WorkspacePython\LeFoot\Fichiers\\classement buteurs.txt", 'wt')
+        nom = open("C:\WorkspacePython\LeFoot\Fichiers\\nom buteurs.txt", 'wt')
+        club = open("C:\WorkspacePython\LeFoot\Fichiers\\club buteurs.txt", 'wt')
+        buts = open("C:\WorkspacePython\LeFoot\Fichiers\\buts buteurs.txt", 'wt')
         # Hadrien
-        classement = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\classement buteurs.txt", 'wt')
-        nom = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\nom buteurs.txt", 'wt')
-        club = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\club buteurs.txt", 'wt')
-        buts = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\buts buteurs.txt", 'wt')
+        # classement = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\classement buteurs.txt", 'wt')
+        # nom = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\nom buteurs.txt", 'wt')
+        # club = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\club buteurs.txt", 'wt')
+        # buts = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\buts buteurs.txt", 'wt')
         # Ecriture de la première ligne de chaques colonnes.
         classement.write("CLASSEMENT \n\n")
         nom.write("NOM \n\n")
@@ -193,16 +193,16 @@ class Championnat():
                     gardiens.append(j)
         gardiens.sort(key=self.triage_arrets, reverse=True)
         # Enregistrement des données en colonnes pour pouvoir faire un affichage propre sur l'interface.
-        # titouan
-        # classement = open("C:\WorkspacePython\LeFoot\Fichiers\\classement gardiens.txt", 'wt')
-        # nom = open("C:\WorkspacePython\LeFoot\Fichiers\\nom gardiens.txt", 'wt')
-        # club = open("C:\WorkspacePython\LeFoot\Fichiers\\club gardiens.txt", 'wt')
-        # buts = open("C:\WorkspacePython\LeFoot\Fichiers\\arrets gardiens.txt", 'wt')
+        # Titouan
+        classement = open("C:\WorkspacePython\LeFoot\Fichiers\\classement gardiens.txt", 'wt')
+        nom = open("C:\WorkspacePython\LeFoot\Fichiers\\nom gardiens.txt", 'wt')
+        club = open("C:\WorkspacePython\LeFoot\Fichiers\\club gardiens.txt", 'wt')
+        buts = open("C:\WorkspacePython\LeFoot\Fichiers\\arrets gardiens.txt", 'wt')
         # Hadrien
-        classement = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\classement gardiens.txt", 'wt')
-        nom = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\nom gardiens.txt", 'wt')
-        club = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\club gardiens.txt", 'wt')
-        buts = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\arrets gardiens.txt", 'wt')
+        # classement = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\classement gardiens.txt", 'wt')
+        # nom = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\nom gardiens.txt", 'wt')
+        # club = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\club gardiens.txt", 'wt')
+        # buts = open("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\arrets gardiens.txt", 'wt')
         classement.write("CLASSEMENT \n\n")
         nom.write("NOM \n\n")
         club.write("CLUB \n\n")
@@ -247,4 +247,5 @@ class Championnat():
                 self.donnees_analyse[2] = [c, c.attaques_reussies]
             if c.defenses_reussies > self.donnees_analyse[3][1]:
                 self.donnees_analyse[3] = [c, c.defenses_reussies]
+            self.donnees_analyse[4].append(c.nb_cartons)
         print(self.donnees_analyse)

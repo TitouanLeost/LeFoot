@@ -63,13 +63,13 @@ class Journee():
                 i += 1
         if dom_c1 == 1:
             self.matchs.append([c1, c2])
-            # f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {self.num}, match détaillé {c1.nom}-{c2.nom}.html",'wt') # titouan
-            f = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\Journée {self.num}, match détaillé {c1.nom}-{c2.nom}.html",
-                     'wt')
+            f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {self.num}, match détaillé {c1.nom}-{c2.nom}.html",'wt') # titouan
+            # f = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\Journée {self.num}, match détaillé {c1.nom}-{c2.nom}.html",
+            #          'wt')
         else:
             self.matchs.append([c2, c1])
-            # f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {self.num}, match détaillé {c2.nom}-{c1.nom}.html",'wt') # titouan
-            f = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\Journée {self.num}, match détaillé {c2.nom}-{c1.nom}.html", 'wt')
+            f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {self.num}, match détaillé {c2.nom}-{c1.nom}.html",'wt') # titouan
+            # f = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\Journée {self.num}, match détaillé {c2.nom}-{c1.nom}.html", 'wt')
         # On affiche les notes des équipes juste pour vérifier (Debug).
         c1.calcul_note_equipe()
         c2.calcul_note_equipe()
@@ -242,6 +242,7 @@ class Journee():
             # Si le joueur reçoit un carton rouge, il est exclu du match.
             if j_f.carton == 2:
                 c2.equipe.remove(j_f)
+            c2.nb_cartons += 1
 
         # On détermine l'issue de l'action.
         if puis_att > puis_def:
@@ -327,8 +328,8 @@ class Journee():
         but_c1 : Nombre de buts de c1.
         but_c2 : Nombre de buts de c2.
         """
-        # f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {self.num}, match {c1.nom}-{c2.nom}.txt", 'wt') # titouan
-        f = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\Journée {self.num}, match {c1.nom}-{c2.nom}.txt", 'wt')
+        f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {self.num}, match {c1.nom}-{c2.nom}.txt", 'wt') # titouan
+        # f = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\Journée {self.num}, match {c1.nom}-{c2.nom}.txt", 'wt')
         # Affichage des buteurs.
         f.write("BUTEURS :\n")
         for i in range(len(liste_buteurs)):

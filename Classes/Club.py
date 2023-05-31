@@ -18,6 +18,7 @@ class Club(list):
         self.nb_victoires = 0
         self.nb_defaites = 0
         self.nb_nuls = 0
+        self.nb_cartons = 0
         self.attaques_reussies = 0
         self.defenses_reussies = 0
         self.note_club = 0
@@ -37,11 +38,11 @@ class Club(list):
         championnat.
         """
         # Mise en place de la connexion avec la database.
-        # con = sqlite3.connect("C:\WorkspacePython\LeFoot\BDD\BDD_joueurs.db") # titouan
-        con = sqlite3.connect("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\BDD_joueurs.db")
+        con = sqlite3.connect("C:\WorkspacePython\LeFoot\BDD\BDD_joueurs.db") # titouan
+        # con = sqlite3.connect("C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\BDD_joueurs.db")
         # Mise en place de la connexion avec la database de sauvegarde.
-        # con2 = sqlite3.connect(f"C:\WorkspacePython\LeFoot\BDD\BDD_{self.nom}.db") # titouan
-        con2 = sqlite3.connect(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\BDD_{self.nom}.db")
+        con2 = sqlite3.connect(f"C:\WorkspacePython\LeFoot\BDD\BDD_{self.nom}.db") # titouan
+        # con2 = sqlite3.connect(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\BDD_{self.nom}.db")
         #con = sqlite3.connect("C:\Users\hadrien dupuy\Desktop\ENSTA B\1A\2.4 projets\Projet informatique\BDD_joueurs.db")
         cur = con.cursor()  # Création du curseur.
         cur2 = con2.cursor()
@@ -105,8 +106,8 @@ class Club(list):
         Méthode permettant de copier les effectifs d'un club entre deux championnats pour simuler de nouveau
         le même championnat.
         """
-        # con = sqlite3.connect(f"C:\WorkspacePython\LeFoot\BDD\BDD_{self.nom}.db") #titouan
-        con = sqlite3.connect(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\BDD_{self.nom}.db")
+        con = sqlite3.connect(f"C:\WorkspacePython\LeFoot\BDD\BDD_{self.nom}.db") #titouan
+        # con = sqlite3.connect(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\BDD_{self.nom}.db")
         cur = con.cursor()
         attaquant = cur.execute("SELECT * FROM effectif WHERE poste == 'Attaquant'")
         at = attaquant.fetchall()
@@ -241,8 +242,8 @@ class Club(list):
 
         final : paramètre spécifiant si la fiche est créée à la fin du championnat ou non.
         """
-        # fichier_club = open(f"C:\WorkspacePython\LeFoot\Fichiers\\fiche de {self.nom}.txt", 'wt') #titouan
-        fichier_club = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\fiche de {self.nom}.txt", 'wt')
+        fichier_club = open(f"C:\WorkspacePython\LeFoot\Fichiers\\fiche de {self.nom}.txt", 'wt') #titouan
+        # fichier_club = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\fiche de {self.nom}.txt", 'wt')
         self.liste_joueurs(fichier_club)
         self.calcul_note_club_log(fichier_club)
         buteurs = self.classement_buteurs_club()

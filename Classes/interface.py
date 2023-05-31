@@ -3,9 +3,10 @@ import Club
 import Championnat
 from Creation_BDD import creation_bdd, copie_bdd
 
-from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtCore import QSize, Qt, QFileInfo, QSettings
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QPushButton, QComboBox, QVBoxLayout, QHBoxLayout, QGridLayout,
-                             QStackedLayout, QWidget, QLabel, QTabWidget, QStackedWidget, QScrollArea, QDialog)
+                             QStackedLayout, QWidget, QLabel, QTabWidget, QStackedWidget, QScrollArea, QDialog,
+                             QLineEdit, qApp)
 from PyQt5.QtGui import QPixmap
 import pyqtgraph as pg
 import numpy as np
@@ -17,6 +18,8 @@ class MainWindow(QMainWindow):
     """
     def __init__(self):
         super().__init__()
+        self.getSettingsValues()  # On récupère les valeurs des QLineEdit précedemment enregistrées
+
         self.champ = None  # Variable d'instance permettant de stocker le championnat
         self.w = None  # Variable d'instance permettant de stocker une autre fenêtre
         self.w1 = None  # Variable d'instance permettant de stocker une autre fenêtre
@@ -25,15 +28,59 @@ class MainWindow(QMainWindow):
 
         layout = QVBoxLayout()  # On définit un affichage vertical
 
+        # Mise en place du QLineEdit permettant de choisir le nom du championnat.
+        layout_edit_champ = QHBoxLayout()
+        self.label = QLabel('Entrez le nom du championnat :')
+        layout_edit_champ.addWidget(self.label)
+        layout_edit_champ.addSpacing(15)
+        self.edit = QLineEdit()
+        self.edit.setText(self.setting_variables.value('nom championnat'))  # On remet la valeur précédente
+        layout_edit_champ.addWidget(self.edit)
+        layout.addLayout(layout_edit_champ)
+
+        # Mise en place des QLineEdit permettant de choisir les noms des équipes.
+        layout_edit_club = QGridLayout()
+        label = QLabel('Entrez les noms des 8 équipes :')
+        layout_edit_club.addWidget(label, 0, 0, 2, 1)
+        self.edit1 = QLineEdit()
+        self.edit2 = QLineEdit()
+        self.edit3 = QLineEdit()
+        self.edit4 = QLineEdit()
+        self.edit5 = QLineEdit()
+        self.edit6 = QLineEdit()
+        self.edit7 = QLineEdit()
+        self.edit8 = QLineEdit()
+        # On remet les valeurs précédentes.
+        self.edit1.setText(self.setting_variables.value('c1'))
+        self.edit2.setText(self.setting_variables.value('c2'))
+        self.edit3.setText(self.setting_variables.value('c3'))
+        self.edit4.setText(self.setting_variables.value('c4'))
+        self.edit5.setText(self.setting_variables.value('c5'))
+        self.edit6.setText(self.setting_variables.value('c6'))
+        self.edit7.setText(self.setting_variables.value('c7'))
+        self.edit8.setText(self.setting_variables.value('c8'))
+        layout_edit_club.addWidget(self.edit1, 1, 0)
+        layout_edit_club.addWidget(self.edit2, 1, 1)
+        layout_edit_club.addWidget(self.edit3, 2, 0)
+        layout_edit_club.addWidget(self.edit4, 2, 1)
+        layout_edit_club.addWidget(self.edit5, 3, 0)
+        layout_edit_club.addWidget(self.edit6, 3, 1)
+        layout_edit_club.addWidget(self.edit7, 4, 0)
+        layout_edit_club.addWidget(self.edit8, 4, 1)
+        layout.addLayout(layout_edit_club)
+        layout.addSpacing(25)
+
         # Mise en place du bouton permettant de créer le championnat.
         bouton_creer = QPushButton("Mise en place du championnat")
         layout.addWidget(bouton_creer)
         bouton_creer.clicked.connect(self.clique_bouton_creer)
+
         # Mise en place du bouton permettant de visualiser les fiches des clubs.
         self.bouton_visu = QPushButton("Visualiser les clubs")
         layout.addWidget(self.bouton_visu)
         self.bouton_visu.clicked.connect(self.clique_bouton_visu)
         self.bouton_visu.setDisabled(True)
+
         # Mise en place du bouton permettant de lancer la simulation.
         self.bouton_simu = QPushButton("Simuler")
         layout.addWidget(self.bouton_simu)
@@ -44,6 +91,26 @@ class MainWindow(QMainWindow):
         widget = QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
+
+    def getSettingsValues(self):
+        """
+        Méthode récupérant les données de la fenêtre qui ont été enregistrées.
+        """
+        self.setting_variables = QSettings('MyApp', 'Variables')
+
+    def closeEvent(self, event):
+        """
+        Méthode qui enregistre les champs des QLineEdit à la fermeture de la fenêtre.
+        """
+        self.setting_variables.setValue('nom championnat', self.edit.text())
+        self.setting_variables.setValue('c1', self.edit1.text())
+        self.setting_variables.setValue('c2', self.edit2.text())
+        self.setting_variables.setValue('c3', self.edit3.text())
+        self.setting_variables.setValue('c4', self.edit4.text())
+        self.setting_variables.setValue('c5', self.edit5.text())
+        self.setting_variables.setValue('c6', self.edit6.text())
+        self.setting_variables.setValue('c7', self.edit7.text())
+        self.setting_variables.setValue('c8', self.edit8.text())
 
     def clique_bouton_creer(self):
         """
@@ -62,15 +129,16 @@ class MainWindow(QMainWindow):
         except:
             print("La database 'BDD_joueurs.db' existe déjà, veillez à la supprimer puis réessayez.")
         # Création des différents clubs.
-        sb = Club.Club("Stade Brestois 29", "Philippe")
-        sr = Club.Club("Stade Rennais FC", "Catherine")
-        se = Club.Club("AS Saint-Etienne", "Etienne")
-        gu = Club.Club("En Avant Guingamp", "Joel")
-        fs = Club.Club("FC Silmi", "Félix")
-        cc = Club.Club("Cagliari Calcio", "Charlie")
-        sc = Club.Club("SM Caen", "Jacob")
-        rl = Club.Club("RC Lens", "Simone")
-        self.champ = Championnat.Championnat("ligue 1", [sb, sr, se, gu, fs, cc, sc, rl])  # Création du championnat
+        sb = Club.Club(self.edit1.text(), "Philippe")
+        sr = Club.Club(self.edit2.text(), "Catherine")
+        se = Club.Club(self.edit3.text(), "Etienne")
+        gu = Club.Club(self.edit4.text(), "Joel")
+        fs = Club.Club(self.edit5.text(), "Félix")
+        cc = Club.Club(self.edit6.text(), "Charlie")
+        sc = Club.Club(self.edit7.text(), "Jacob")
+        rl = Club.Club(self.edit8.text(), "Simone")
+        # Création du championnat
+        self.champ = Championnat.Championnat(self.edit.text(), [sb, sr, se, gu, fs, cc, sc, rl])
         try:
             self.champ.remplissage(False)  # Remplissage des effectifs des clubs
         except:
@@ -88,16 +156,19 @@ class MainWindow(QMainWindow):
         Elle permet de créer les clubs et le championnat à partir d'une BDD déjà existante.
         """
         # Création des différents clubs
-        sb = Club.Club("Stade Brestois 29", "Philippe")
-        sr = Club.Club("Stade Rennais FC", "Catherine")
-        se = Club.Club("AS Saint-Etienne", "Etienne")
-        gu = Club.Club("En Avant Guingamp", "Joel")
-        fs = Club.Club("FC Silmi", "Félix")
-        cc = Club.Club("Cagliari Calcio", "Charlie")
-        sc = Club.Club("SM Caen", "Jacob")
-        rl = Club.Club("RC Lens", "Simone")
-        self.champ = Championnat.Championnat("ligue 1", [sb, sr, se, gu, fs, cc, sc, rl])  # Création du championnat
-        self.champ.remplissage(True)  # Remplissage des effectifs des clubs
+        sb = Club.Club(self.edit1.text(), "Philippe")
+        sr = Club.Club(self.edit2.text(), "Catherine")
+        se = Club.Club(self.edit3.text(), "Etienne")
+        gu = Club.Club(self.edit4.text(), "Joel")
+        fs = Club.Club(self.edit5.text(), "Félix")
+        cc = Club.Club(self.edit6.text(), "Charlie")
+        sc = Club.Club(self.edit7.text(), "Jacob")
+        rl = Club.Club(self.edit8.text(), "Simone")
+        self.champ = Championnat.Championnat(self.edit.text(), [sb, sr, se, gu, fs, cc, sc, rl])  # Création du championnat
+        try:
+            self.champ.remplissage(True)  # Remplissage des effectifs des clubs
+        except:
+            print("Il n'y aucune database au nom de vos équipes, essayez l'option 'nouveau' pour les créer.")
         self.champ.creation_fiche_clubs(False)  # Création des fiches des clubs
         # On active les boutons "Visualiser les clubs" et "Simuler".
         self.bouton_visu.setDisabled(False)
@@ -124,7 +195,7 @@ class MainWindow(QMainWindow):
         self.w1 = Chargement()
         self.w1.show()
         self.w.show()
-        self.hide()
+        self.close()
         self.w1.hide()
 
 
@@ -563,6 +634,7 @@ class VisuComplet(QMainWindow):
         a = self.champ.donnees_analyse[1][0]
         c1 = self.champ.donnees_analyse[2][0]
         c2 = self.champ.donnees_analyse[3][0]
+        cartons = self.champ.donnees_analyse[4]
         label = QLabel(f"<b><u>Le gardien le plus efficace :</u> {g.prenom[0]}.{g.nom}</b> ({g.club}) avec "
                        f"<b>{g.efficacite * 100:.1f}%</b> de tirs arrêtés")
         layout.addWidget(label)
@@ -575,9 +647,41 @@ class VisuComplet(QMainWindow):
         label = QLabel(f"<b><u>La meilleur club en défense :</u> <font color={c2.couleur}>{c2.nom}</font></b> avec "
                        f"<b>{self.champ.donnees_analyse[3][1]}</b> défenses réussies")
         layout.addWidget(label)
+        layout.addSpacing(50)
+        layout.addWidget(self.graphe_cartons(cartons))
 
         widget.setLayout(layout)
         return widget
+
+    def graphe_cartons(self, y):
+        """
+        Méthode permettant la création d'un graphe en bar représentant le nombre de cartons reçus par clubs.
+
+        y : hauteur du graphe.
+        """
+        # Création du widget contenant le graphe
+        graphWidget = pg.PlotWidget()
+        graphWidget.setMouseEnabled(x=False, y=False)  # On bloque les interactions de la souris
+        graphWidget.setBackground('w')
+        graphWidget.setTitle("Nombre de cartons par clubs")
+        graphWidget.setLabel("left", "Nombre de cartons")
+
+        xval = [1, 2, 3, 4, 5, 6, 7, 8]  # Création de l'axe des abscisses
+        # Mise en place des labels à afficher sur l'axe des abscisses.
+        xlab = []
+        for c in self.champ.clubs:
+            xlab.append(c.nom)
+        ticks = []
+        for i, item in enumerate(xlab):
+            ticks.append((xval[i], item))
+
+        bargraph = pg.BarGraphItem(x=xval, height=y, width=0.4)  # On trace le graphe
+        graphWidget.addItem(bargraph)  # Ajout du graphe au widget
+        # Affichage des labels correspondant aux clubs sur l'axe des abscisses.
+        axis = graphWidget.getAxis('bottom')
+        axis.setTicks([ticks])
+
+        return graphWidget
 
 
 class ScrollLabel(QScrollArea):
