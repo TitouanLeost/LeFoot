@@ -125,7 +125,7 @@ class VisuComplet(QMainWindow):
     def __init__(self, championnat):
         super().__init__()
         self.setWindowTitle("Visualisation finale")
-        self.setMinimumSize(700, 300)
+        self.setMinimumSize(900, 500)
         self.champ = championnat
         self.resume_txt = ""
         self.club_txt = ""
@@ -156,9 +156,6 @@ class VisuComplet(QMainWindow):
         tab5 = self.analysesTab()
         tabs.addTab(tab5, "Analyses")
 
-        tab6 = self.graphesTab()
-        tabs.addTab(tab6, "Graphes")
-
         self.setCentralWidget(tabs)
 
     # Onglet des résultats.
@@ -166,6 +163,7 @@ class VisuComplet(QMainWindow):
         """
         Méthode permettant de générer l'onglet des résultats.
         """
+        scroll = QScrollArea()
         fenetre = QWidget()  # Création du widget correspondant à la visualisation des résultats
         layout = QVBoxLayout()  # Création du layout de la page
         self.stacked_layout_r = QStackedLayout()  # Création d'un layout pour empiler les résultats des journées
@@ -183,8 +181,10 @@ class VisuComplet(QMainWindow):
         selection.currentIndexChanged.connect(self.index_resultats)
         layout.addWidget(selection)  # Ajout de la boite de sélection au layout
         layout.addLayout(self.stacked_layout_r)  # Ajout des tableaux des scores par journées au layout
+        layout.addWidget(self.graphe_evolution_scores())
         fenetre.setLayout(layout)  # Définition du layout de la fenêtre
-        return fenetre
+        scroll.setWidget(fenetre)
+        return scroll
 
 
     def resultats_journee(self, num):
@@ -236,6 +236,23 @@ class VisuComplet(QMainWindow):
         encaisses.close()
         points.close()
         return resultats
+
+    def graphe_evolution_scores(self):
+
+        graphWidget = pg.PlotWidget()
+        graphWidget.setMouseEnabled(x=False, y=False)
+        graphWidget.setBackground('w')
+        graphWidget.setTitle("Evolution des scores")
+        graphWidget.setLabel("left", "Score")
+        graphWidget.setLabel("bottom", "Journée")
+        graphWidget.addLegend()
+        x = np.arange(1, 15)
+
+        for c in self.champ.clubs:
+            pen = pg.mkPen(color=c.couleur, width=3)
+            graphWidget.plot(x, c.liste_score, name=c.nom, pen=pen)
+
+        return graphWidget
 
     def index_resultats(self, i):
         self.stacked_layout_r.setCurrentIndex(i)
@@ -519,22 +536,6 @@ class VisuComplet(QMainWindow):
 
         widget.setLayout(layout)
         return widget
-
-    def graphesTab(self):
-
-        self.graphWidget = pg.PlotWidget()
-        self.graphWidget.setBackground('w')
-        self.graphWidget.setTitle("Evolution des scores")
-        self.graphWidget.setLabel("left", "Score")
-        self.graphWidget.setLabel("bottom", "Journée")
-        self.graphWidget.addLegend()
-        x = np.arange(1, 15)
-
-        for c in self.champ.clubs:
-            pen = pg.mkPen(color=c.couleur, width=3)
-            self.graphWidget.plot(x, c.liste_score, name=c.nom, pen=pen)
-
-        return self.graphWidget
 
 
 class ScrollLabel(QScrollArea):
