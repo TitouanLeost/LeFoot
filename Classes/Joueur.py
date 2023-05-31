@@ -8,11 +8,11 @@ class Joueur():
         self.prenom = prenom
         self.nom = nom
         self.note_originale = note
-        self.note = note
+        self.note = note  # Note modifiée après blessure
         self.club = club
-        self.etat = 0
-        self.carton = 0
-        self.cpt_carton = 0
+        self.etat = 0  # Etat physique dépendant d'une blessure (évolue entre 0 et 3)
+        self.carton = 0  # self.carton = 1 ou 2 si le joueur a respectivement un carton jaune ou rouge
+        self.cpt_carton = 0  # Nombre de journées depuis l'application du dernier carton
 
 
     def blessure(self, f):
@@ -22,19 +22,19 @@ class Joueur():
         f : fichier dans lequel on enregistre les données.
         """
         if self.etat == 0:  # Si le joueur n'est pas encore blessé
-            # On détermine le degré de sa blessure
+            # On détermine le degré de sa blessure.
             lb = [1, 1, 1, 1, 1, 1, 2, 2, 2, 3]
             rd.shuffle(lb)
             degre_blessure = lb[0]
         elif self.etat == 1:  # Si le joueur a déjà une blessure légère
-            # On détermine le degré de sa nouvelle blessure
+            # On détermine le degré de sa nouvelle blessure.
             lb = [2, 2, 2, 2, 2, 2, 3, 3, 3, 3]
             rd.shuffle(lb)
             degre_blessure = lb[0]
         elif self.etat >= 2:  # Si le joueur a une blessure importante
-            # On détermine le degré de sa blessure
+            # Il obtient donc une blessure de niveau 3, la plus grave.
             degre_blessure = 3
-        # Maj de l'état du joueur.
+        # Mise à jour de l'état du joueur.
         self.etat = degre_blessure
         # En cas de blessure, la note du joueur est réduite de 10, 20 ou 30% de la note originale.
         self.note = (1 - (self.etat / 10)) * self.note_originale
@@ -66,11 +66,11 @@ class Joueur():
             # Le joueur reçoit nécessairement un carton rouge.
             self.carton = 2
             self.cpt_carton = 0  # On remet le compteur de matchs avec cartons à zéro
-            if lf[0] == 1:
+            if lf[0] == 1:  # S'il a obtenu le carton rouge à cause d'un second carton jaune
                 print(f"{self.nom} reçoit un second carton jaune et a donc un carton rouge")
                 f.write(f"<font color='#FF0000'><b>{self.prenom[0]}.{self.nom} ({self.club})</b> "
                         f"reçoit un second carton jaune et a donc un carton rouge</font><br>")
-            else:
+            else:  # Sinon, il a directement obtenu un carton rouge
                 print(f"{self.nom} reçoit un carton rouge")
                 f.write(f"<font color='#FF0000'><b>{self.prenom[0]}.{self.nom} ({self.club})</b> "
                         f"reçoit un carton rouge</font><br>")
@@ -96,18 +96,21 @@ class Joueur():
         if self.carton == 1:
             if self.cpt_carton == 2:
                 self.carton = 0
-                self.cpt_carton = 0
+                self.cpt_carton = 0  # On remet le compteur à zéro
                 print(f"{self.nom} n'a plus son carton jaune.")
             self.cpt_carton += 1
         # Remise à zéro des cartons rouges s'ils ont été appliqués depuis 5 matchs.
         elif self.carton == 2:
             if self.cpt_carton == 5:
                 self.carton = 0
-                self.cpt_carton = 0
+                self.cpt_carton = 0  # On remet le compteur à zéro
                 print(f"{self.nom} n'a plus son carton rouge.")
             self.cpt_carton += 1
 
 class Gardien(Joueur):
+    """
+    Classe permettant la création d'un gardien.
+    """
     def __init__(self, prenom, nom, note, club):
         super().__init__(prenom, nom, note, club)
         self.poste = "Gardien"
@@ -129,6 +132,9 @@ class Gardien(Joueur):
 
 
 class Attaquant(Joueur):
+    """
+    Classe permettant la création d'un attaquant.
+    """
     def __init__(self, prenom, nom, note, club):
         super().__init__(prenom, nom, note, club)
         self.poste = "Attaquant"
@@ -150,6 +156,9 @@ class Attaquant(Joueur):
 
 
 class Milieu(Joueur):
+    """
+    Classe permettant la création d'un milieu.
+    """
     def __init__(self, prenom, nom, note, club):
         super().__init__(prenom, nom, note, club)
         self.poste = "Milieu"
@@ -159,6 +168,9 @@ class Milieu(Joueur):
 
 
 class Defenseur(Joueur):
+    """
+    Classe permettant la création d'un défenseur.
+    """
     def __init__(self, prenom, nom, note, club):
         super().__init__(prenom, nom, note, club)
         self.poste = "Défenseur"
