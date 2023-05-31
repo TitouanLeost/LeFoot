@@ -213,6 +213,7 @@ class Journee():
         print(f"Puissance attaque {c1} = {puis_att}")
         print(f"Puissance défense {c2} = {puis_def}")
 
+        # On enregistre ces données pour le détail du match.
         f.write(f"> Note attaque <b>{c1} = <font color={c1.couleur}>{note_att:.0f}</font></b><br>")
         f.write(f"----> Après randomisation : Puissance attaque <b>{c1} = "
                 f"<font color={c1.couleur}>{puis_att:.0f}</font></b><br>")
@@ -223,14 +224,15 @@ class Journee():
         # On prend en compte la possibilité qu'un joueur se blesse et/ou qu'une faute soit commise.
         proba_blessure = rd.random()
         proba_faute = rd.random()
-        if proba_blessure > 0.97:  # 3% de chance qu'un joueur se blesse
+        if proba_blessure > 0.95:  # 5% de chance qu'un joueur se blesse
             # On choisit le joueur blessé au hasard dans l'équipe attaquante.
             ib = rd.randint(0, len(c1.equipe)-1)
             jb = c1.equipe[ib]
+            # On change de joueur si ce n'est pas un attaquant ou un milieu.
             while jb.poste != "Attaquant" and jb.poste != "Milieu":
                 ib = rd.randint(0, len(c1.equipe)-1)
                 jb = c1.equipe[ib]
-            jb.blessure(f)
+            jb.blessure(f)  # Détermination de la gravité de la blessure
             # On ajoute le joueur à la liste des blessés du match.
             if jb not in self.joueurs_blessures:
                 self.joueurs_blessures.append(jb)
@@ -242,7 +244,8 @@ class Journee():
             # On choisit le joueur qui commet la faute au hasard dans l'équipe défenseuse.
             i_f = rd.randint(0, len(c2.equipe)-1)
             j_f = c2.equipe[i_f]
-            while j_f.poste != "Attaquant" and j_f.poste != "Milieu":
+            # On change de joueur si ce n'est pas un défenseur.
+            while j_f.poste != "Défenseur":
                 i_f = rd.randint(0, len(c2.equipe)-1)
                 j_f = c2.equipe[i_f]
             j_f.faute(f)
@@ -276,6 +279,7 @@ class Journee():
             # Affichage des notes (debug).
             print("note_frappe :", note_frappe)
             print("note_arret :", note_arret)
+            # Enregistrement.
             f.write(f"<b>{j.prenom[0]}.{j.nom}</b> tir ! (Note de la frappe : "
                     f"<font color={c1.couleur}><b>{note_frappe:.1f}</b></font>)<br>")
             f.write(f"<b>{gardien.prenom[0]}.{gardien.nom}</b> plonge (Note de l'arrêt : "
@@ -288,14 +292,14 @@ class Journee():
                 f.write(f"===> <b>{j.prenom[0]}.{j.nom} marque un but pour {c1} à la {temps}ème minute !</b><br>")
                 f.write("<br>")
                 j.but()
-                return 1, j, temps
+                return 1, j, temps  # S'il y a but, on renvoie le buteur et la minute du but
             else:
                 print(f"===> {gardien.prenom[0]}.{gardien.nom} arrête le tir de {j.prenom[0]}.{j.nom}")
                 print("- - - - - - - -")
                 f.write(f"===> <b>{gardien.prenom[0]}.{gardien.nom} arrête le tir de {j.prenom[0]}.{j.nom}</b><br>")
                 f.write("<br>")
                 gardien.arret()
-                return 0, gardien, temps
+                return 0, gardien, temps  # S'il n'y a pas but, on renvoie le gardien et la minute de l'arrêt
 
         else:
             print(f"--> La défense de {c2} parvient à repousser l'offensive de {c1}")
@@ -316,8 +320,9 @@ class Journee():
         """
         Méthode simulant le déroulement d'une journée.
         """
+        # Tant que tout les clubs n'ont pas joué.
         while len(self.clubs) > 0:
-            self.match()
+            self.match()  # Simulation d'un match
         self.score_journee()
         # Les joueurs récupèrent à chaque fin de journée.
         for c in self.clubs_complet:
