@@ -92,20 +92,19 @@ class Joueur():
         """
         Méthode réinitialisant les cartons obtenus par le joueur lors d'un match
         """
-        # Remise à zéro des cartons jaunes s'ils ont été appliqués depuis 2 matchs.
+        # Remise à zéro des cartons jaunes à la fin de la journée.
         if self.carton == 1:
-            if self.cpt_carton == 2:
-                self.carton = 0
-                self.cpt_carton = 0  # On remet le compteur à zéro
-                print(f"{self.nom} n'a plus son carton jaune.")
-            self.cpt_carton += 1
+            self.carton = 0
+            self.cpt_carton = 0  # On remet le compteur à zéro
+            print(f"{self.nom} n'a plus son carton jaune.")
         # Remise à zéro des cartons rouges s'ils ont été appliqués depuis 5 matchs.
         elif self.carton == 2:
             if self.cpt_carton == 5:
                 self.carton = 0
                 self.cpt_carton = 0  # On remet le compteur à zéro
                 print(f"{self.nom} n'a plus son carton rouge.")
-            self.cpt_carton += 1
+            else:
+                self.cpt_carton += 1
 
 class Gardien(Joueur):
     """

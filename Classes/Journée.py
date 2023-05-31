@@ -17,7 +17,7 @@ class Journee():
 
     def match(self):
         """
-        Fonction permettant le déroulement d'un match
+        Méthode permettant de simuler le déroulement d'un match.
         """
         c1 = self.clubs.pop()  # On récupère le dernier club de la liste tout en le retirant de celle-ci
         match_realise = False
@@ -59,17 +59,23 @@ class Journee():
                 dom_c1 = 0
                 dom_c2 = 1
                 print(f"{c2} joue à domicile contre {c1}")
-            else:
+            else:  # Si c1 et c2 ont déjà fait leurs deux rencontres, on passe au club suivant
                 i += 1
-        if dom_c1 == 1:
+
+        # On prépare l'enregistrement en détail du match
+        if dom_c1 == 1:  # Si c1 est à domicile
             self.matchs.append([c1, c2])
-            f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {self.num}, match détaillé {c1.nom}-{c2.nom}.html",'wt') # titouan
-            # f = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\Journée {self.num}, match détaillé {c1.nom}-{c2.nom}.html",
-            #          'wt')
-        else:
+            f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\"
+                     f"Journée {self.num}, match détaillé {c1.nom}-{c2.nom}.html", 'wt')  # titouan
+            # f = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\"
+            #          f"Journée {self.num}, match détaillé {c1.nom}-{c2.nom}.html", 'wt')  # hadrien
+        else:  # Si c2 est à domicile
             self.matchs.append([c2, c1])
-            f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {self.num}, match détaillé {c2.nom}-{c1.nom}.html",'wt') # titouan
-            # f = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\Journée {self.num}, match détaillé {c2.nom}-{c1.nom}.html", 'wt')
+            f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\"
+                     f"Journée {self.num}, match détaillé {c2.nom}-{c1.nom}.html", 'wt') # titouan
+            # f = open(f"C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\
+            # Journée {self.num}, match détaillé {c2.nom}-{c1.nom}.html", 'wt')  # hadrien
+
         # On affiche les notes des équipes juste pour vérifier (Debug).
         c1.calcul_note_equipe()
         c2.calcul_note_equipe()
@@ -85,6 +91,7 @@ class Journee():
         #print(f"dom_c2 = {dom_c2}")
         print("")
 
+        # Enregistrement de ces informations.
         f.write(f"L'équipe de <font color={c1.couleur}><b>{c1}</b></font> à une note de "
                 f"<b><font color={c1.couleur}>{c1.note_equipe:.2f}</font></b>.<br>")
         f.write(f"L'équipe de <font color={c2.couleur}><b>{c2}</b></font> à une note de "
@@ -94,6 +101,7 @@ class Journee():
         f.write(f"<b>{c2}</b> va avoir <font color={c2.couleur}><b>{nb_act_c2} actions</b></font>.<br>")
         f.write("<br>")
 
+        # On met en place le déroulement des actions associées à la minute à laquelle elles se déroulent.
         liste_actions = []
         liste_temps = []
         for i in range(nb_act_c1):
@@ -113,7 +121,7 @@ class Journee():
             t = liste_temps.pop()  # On récupère la minute à laquelle se déroule l'action
             if a == "c1":
                 print(f"# Action de {c1} :")
-                but, joueur, temps = self.action(c1, c2, dom_c1, dom_c2, t, f)
+                but, joueur, temps = self.action(c1, c2, dom_c1, dom_c2, t, f)  # On simule l'action
                 if but == 1:
                     but_c1 += 1  # On met à jour le nombre de buts de c1 dans ce match
                     c1.nb_buts += 1  # On met à jour le nombre de buts totaux de c1 dans le championnat
@@ -123,7 +131,7 @@ class Journee():
                     liste_arrets.append([joueur, temps])
             elif a == "c2":
                 print(f"# Action de {c2} :")
-                but, joueur, temps = self.action(c2, c1, dom_c2, dom_c1, t, f)
+                but, joueur, temps = self.action(c2, c1, dom_c2, dom_c1, t, f)  # On simule l'action
                 if but == 1:
                     but_c2 += 1  # On met à jour le nombre de buts de c2 dans ce match
                     c2.nb_buts += 1  # On met à jour le nombre de buts totaux de c2 dans le championnat
@@ -133,6 +141,7 @@ class Journee():
                     liste_arrets.append([joueur, temps])
                     print("joueur :", joueur)
 
+        # On lance l'enregistrement du résumé du match.
         if dom_c1 == 1:
             self.resume_match_log(c1, c2, liste_buteurs, liste_arrets, but_c1, but_c2)
         else:
@@ -160,6 +169,7 @@ class Journee():
             print("----------------------------------------------------------------------------")
             f.write(f"<font color={c1.couleur}><b>{c1}</b></font> et <font color={c2.couleur}><b>{c2}</b></font> "
                     f"font un match nul avec <b>{but_c1}</b> partout")
+
         # Mise à jour de la liste des scores
         c1.liste_score.append(c1.score)
         c2.liste_score.append(c2.score)
@@ -172,8 +182,8 @@ class Journee():
 
         c1 : club en attaque
         c2 : club en défense
-        dom_c1 : domc1=1 si c1 est à domicile
-        dom_c2 : domc2=1 si c2 est à domicile
+        dom_c1 : domc1=1 si c1 est à domicile, 0 sinon
+        dom_c2 : domc2=1 si c2 est à domicile, 0 sinon
         temps : minute à laquelle se déroule l'action
         f : fichier dans lequel on enregistre le déroulement détaillé des actions
         """
