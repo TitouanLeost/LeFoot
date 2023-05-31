@@ -5,7 +5,8 @@ from Creation_BDD import creation_bdd, copie_bdd
 
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QPushButton, QComboBox, QVBoxLayout, QHBoxLayout, QGridLayout,
-                             QStackedLayout, QWidget, QLabel, QTabWidget, QStackedWidget, QScrollArea)
+                             QStackedLayout, QWidget, QLabel, QTabWidget, QStackedWidget, QScrollArea, QDialog)
+from PyQt5.QtGui import QPixmap
 import pyqtgraph as pg
 import numpy as np
 
@@ -18,6 +19,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.champ = None  # Variable d'instance permettant de stocker le championnat
         self.w = None  # Variable d'instance permettant de stocker une autre fenêtre
+        self.w1 = None  # Variable d'instance permettant de stocker une autre fenêtre
         self.setWindowTitle("LeFoot")
         self.setMinimumSize(QSize(500, 400))
 
@@ -45,8 +47,45 @@ class MainWindow(QMainWindow):
 
     def clique_bouton_creer(self):
         """
-        Méthode déclenchée par l'appui sur le bouton "Mise en place du championnat". Elle permet de créer les clubs
-        et le championnat.
+        Méthode affichant une fenêtre de dialogue.
+        """
+        dlg = CustomDialog()
+        dlg.exec()
+
+    def nouveau(self):
+        """
+        Méthode déclenchée par l'appui sur le bouton "Mise en place du championnat", puis "nouveau".
+        Elle permet de créer les clubs et le championnat à partir d'une nouvelle BDD.
+        """
+        try:
+            creation_bdd()  # Création de la BDD
+        except:
+            print("La database 'BDD_joueurs.db' existe déjà, veillez à la supprimer puis réessayez.")
+        # Création des différents clubs.
+        sb = Club.Club("Stade Brestois 29", "Philippe")
+        sr = Club.Club("Stade Rennais FC", "Catherine")
+        se = Club.Club("AS Saint-Etienne", "Etienne")
+        gu = Club.Club("En Avant Guingamp", "Joel")
+        fs = Club.Club("FC Silmi", "Félix")
+        cc = Club.Club("Cagliari Calcio", "Charlie")
+        sc = Club.Club("SM Caen", "Jacob")
+        rl = Club.Club("RC Lens", "Simone")
+        self.champ = Championnat.Championnat("ligue 1", [sb, sr, se, gu, fs, cc, sc, rl])  # Création du championnat
+        try:
+            self.champ.remplissage(False)  # Remplissage des effectifs des clubs
+        except:
+            print("Il est possible que les databases des différents clubs existent déjà, veillez à les supprimer "
+                  "puis réessayez.")
+        self.champ.creation_fiche_clubs(False)  # Création des fiches des clubs
+        # On active les boutons "Visualiser les clubs" et "Simuler".
+        self.bouton_visu.setDisabled(False)
+        self.bouton_simu.setDisabled(False)
+        print("Création nouveau Ok")  # Debug
+
+    def relancer(self):
+        """
+        Méthode déclenchée par l'appui sur le bouton "Mise en place du championnat", puis "relancer".
+        Elle permet de créer les clubs et le championnat à partir d'une BDD déjà existante.
         """
         # Création des différents clubs
         sb = Club.Club("Stade Brestois 29", "Philippe")
@@ -63,7 +102,7 @@ class MainWindow(QMainWindow):
         # On active les boutons "Visualiser les clubs" et "Simuler".
         self.bouton_visu.setDisabled(False)
         self.bouton_simu.setDisabled(False)
-        print("Création Ok")  # Debug
+        print("Création relancer Ok")  # Debug
 
     def clique_bouton_visu(self):
         """
@@ -82,8 +121,11 @@ class MainWindow(QMainWindow):
         self.champ.creation_fiche_clubs()  # Enregistrement des données des clubs dans des fichiers texte
         print("Simulation OK")  # Debug
         self.w = VisuComplet(self.champ)
+        self.w1 = Chargement()
+        self.w1.show()
         self.w.show()
         self.hide()
+        self.w1.hide()
 
 
 class VisuClubs(QMainWindow):
@@ -570,6 +612,60 @@ class ScrollLabel(QScrollArea):
     def setText(self, text):
         # setting text to the label
         self.label.setText(text)
+
+
+class Chargement(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Chargement")
+        # self.setMinimumSize(800, 600)
+        widget = QLabel()
+        image = QPixmap(f"C:\WorkspacePython\LeFoot\Images\\Foot de rue saison 1 generique_056.jpg")
+        widget.setPixmap(image)
+        # for i in range(300):
+        #     if i < 10:
+        #         image = QPixmap(f"C:\WorkspacePython\LeFoot\Images\\Foot de rue saison 1 generique_00{i}.jpg")
+        #         widget.setPixmap(image)
+        #     elif 10 <= i <100:
+        #         image = QPixmap(f"C:\WorkspacePython\LeFoot\Images\\Foot de rue saison 1 generique_0{i}.jpg")
+        #         widget.setPixmap(image)
+        #     else:
+        #         image = QPixmap(f"C:\WorkspacePython\LeFoot\Images\\Foot de rue saison 1 generique_{i}.jpg")
+        #         widget.setPixmap(image)
+        self.setCentralWidget(widget)
+
+
+class CustomDialog(QDialog):
+    """
+    Classe créant une fenêtre de dialogue qui met en pause l'exécution du reste du programme.
+    """
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle("Faites un choix")
+        layout = QVBoxLayout()
+        btn_layout = QHBoxLayout()
+
+        # Affichage du texte de la boîte de dialogue
+        texte = "Si c'est le premier lancement, ou que vous voulez changer de joueur dans les équipes," \
+                "cliquez sur 'Nouveau'\n Sinon, cliquez sur 'Relancer'"
+        layout.addWidget(QLabel(texte))
+        layout.addLayout(btn_layout)
+
+        # Création des boutons
+        btn = QPushButton("Nouveau")
+        btn.clicked.connect(window.nouveau)
+        btn.clicked.connect(self.fermer)
+        btn_layout.addWidget(btn)
+        btn = QPushButton("Relancer")
+        btn.clicked.connect(window.relancer)
+        btn.clicked.connect(self.fermer)
+        btn_layout.addWidget(btn)
+
+        self.setLayout(layout)  # Application du layout
+
+    def fermer(self):
+        self.close()
 
 
 app = QApplication(sys.argv)
