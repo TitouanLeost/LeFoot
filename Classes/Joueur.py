@@ -1,5 +1,6 @@
 import random as rd
 
+
 class Joueur():
     """
     Classe renseignant toutes les informations propres à un joueur

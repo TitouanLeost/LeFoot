@@ -12,8 +12,9 @@ class Championnat():
         self.journees = 14
         self.journees_liste = []
         self.liste_scores = []
+        # Liste des couleurs associées aux clubs.
         self.liste_couleur = ['#FF5733', '#F89107', '#88D30C', '#0DE915', '#0BC9DA', '#850BDA', '#BF0CCA', '#EE0899']
-        self.donnees_analyse = [[0, 0], [0, 0], [0, 0], [0, 0], []]
+        self.donnees_analyse = [[0, 0], [0, 0], [0, 0], [0, 0], []]  # Liste contenant les données des analyses
 
     def __str__(self):
         return f"{self.nom}"
@@ -233,19 +234,27 @@ class Championnat():
             c.fiche_club(final)
 
     def analyse(self):
+        """
+        Méthode réalisant quelques analyses sur le championnat.
+        """
         for c in self.clubs:
             for j in c:
+                # On garde le gardien le plus efficace.
                 if j.poste == "Gardien":
                     j.calcul_efficacite()
                     if j.efficacite > self.donnees_analyse[0][1]:
                         self.donnees_analyse[0] = [j, j.efficacite]  # On enregistre le gardien le plus efficace
+                # On garde l'attaquant le plus efficace.
                 elif j.poste == "Attaquant":
                     j.calcul_efficacite()
                     if j.efficacite > self.donnees_analyse[1][1]:
                         self.donnees_analyse[1] = [j, j.efficacite]  # On enregistre l'attaquant le plus efficace
+            # On enregistre le clubs ayant l'attaque la plus efficace.
             if c.attaques_reussies > self.donnees_analyse[2][1]:
                 self.donnees_analyse[2] = [c, c.attaques_reussies]
+            # On enregistre le clubs ayant la défense la plus efficace.
             if c.defenses_reussies > self.donnees_analyse[3][1]:
                 self.donnees_analyse[3] = [c, c.defenses_reussies]
+            # On enregistre le nombre de cartons obtenus chaques clubs.
             self.donnees_analyse[4].append(c.nb_cartons)
-        print(self.donnees_analyse)
+        print(self.donnees_analyse)  # Debug
