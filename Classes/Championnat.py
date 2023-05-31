@@ -13,6 +13,7 @@ class Championnat():
         self.journees_liste = []
         self.liste_scores = []
         self.liste_couleur = ['#FF5733', '#F89107', '#88D30C', '#0DE915', '#0BC9DA', '#850BDA', '#BF0CCA', '#EE0899']
+        self.donnees_analyse = [[0, 0], [0, 0], [0, 0], [0, 0]]
 
     def __str__(self):
         return f"{self.nom}"
@@ -43,13 +44,14 @@ class Championnat():
             # Simulation des journées
             j = Journée.Journee(i, self)
             j.deroulement()
+            self.score_journee()  # Création de la liste des scores
+            self.tableau_score_log(i)  # Enregistrement du tableau des scores
             self.journees_liste.append(j)
             print("=====================================================")
-        self.score_final()  # Création de la liste des scores
         self.tableau_score()  # Affichage du score final
-        self.tableau_score_log()  # Enregistrement du tableau des scores
         self.classement_buteurs()  # Enregistrement du classement des buteurs
         self.classement_gardiens()  # Enregistrement du classement des gardiens
+        self.analyse()  # Analyse du championnat
 
     def tableau_score(self):
         """
@@ -65,26 +67,30 @@ class Championnat():
             print(f"{c} fini le championnat avec {c.score} points et {c.nb_buts} buts marqués.")
             f.write(f"{c} fini le championnat avec {c.score} points et {c.nb_buts} buts marqués.")
 
-    def tableau_score_log(self):
+    def tableau_score_log(self, num):
         """
         Fonction permettant d'enregistrer le tableau des scores en fin de championnat.
+
+        num : numéro de la journée.
         """
         # Enregistrement des données en colonnes pour pouvoir faire un affichage propre sur l'interface.
-        classement = open("C:\WorkspacePython\LeFoot\Fichiers\\classement clubs.txt", 'wt')
-        nom = open("C:\WorkspacePython\LeFoot\Fichiers\\nom clubs.txt", 'wt')
-        victoires = open("C:\WorkspacePython\LeFoot\Fichiers\\victoires clubs.txt", 'wt')
-        defaites = open("C:\WorkspacePython\LeFoot\Fichiers\\défaites clubs.txt", 'wt')
-        nuls = open("C:\WorkspacePython\LeFoot\Fichiers\\nuls clubs.txt", 'wt')
-        buts = open("C:\WorkspacePython\LeFoot\Fichiers\\buts clubs.txt", 'wt')
-        points = open("C:\WorkspacePython\LeFoot\Fichiers\\points clubs.txt", 'wt')
+        classement = open(f"C:\WorkspacePython\LeFoot\Fichiers\\classement clubs journée {num}.txt", 'wt')
+        nom = open(f"C:\WorkspacePython\LeFoot\Fichiers\\nom clubs journée {num}.txt", 'wt')
+        victoires = open(f"C:\WorkspacePython\LeFoot\Fichiers\\victoires clubs journée {num}.txt", 'wt')
+        defaites = open(f"C:\WorkspacePython\LeFoot\Fichiers\\défaites clubs journée {num}.txt", 'wt')
+        nuls = open(f"C:\WorkspacePython\LeFoot\Fichiers\\nuls clubs journée {num}.txt", 'wt')
+        buts = open(f"C:\WorkspacePython\LeFoot\Fichiers\\buts clubs journée {num}.txt", 'wt')
+        encaisses = open(f"C:\WorkspacePython\LeFoot\Fichiers\\encaissés clubs journée {num}.txt", 'wt')
+        points = open(f"C:\WorkspacePython\LeFoot\Fichiers\\points clubs journée {num}.txt", 'wt')
         # Ecriture de la première ligne de chaques colonnes.
-        classement.write(f"CLASSEMENT\n\n")
-        nom.write(f"NOM\n\n")
-        victoires.write(f"VICTOIRES\n\n")
-        defaites.write(f"DEFAITES\n\n")
-        nuls.write(f"NULS\n\n")
-        buts.write(f"BUTS\n\n")
-        points.write(f"POINTS\n\n")
+        classement.write("CLASSEMENT\n\n")
+        nom.write("NOM\n\n")
+        victoires.write("VICTOIRES\n\n")
+        defaites.write("DEFAITES\n\n")
+        nuls.write("NULS\n\n")
+        buts.write("BUTS\n\n")
+        encaisses.write("ENCAISSES\n\n")
+        points.write("POINTS\n\n")
         # Remplissage des colonnes.
         for i, c in enumerate(self.liste_scores, start=1):
             classement.write(f"#{i}\n")
@@ -93,6 +99,7 @@ class Championnat():
             defaites.write(f"{c.nb_defaites}\n")
             nuls.write(f"{c.nb_nuls}\n")
             buts.write(f"{c.nb_buts}\n")
+            encaisses.write(f"{c.nb_buts_encaisses}\n")
             points.write(f"{c.score}\n")
         classement.close()
         nom.close()
@@ -100,9 +107,10 @@ class Championnat():
         defaites.close()
         nuls.close()
         buts.close()
+        encaisses.close()
         points.close()
 
-    def score_final(self):
+    def score_journee(self):
         """
         Fonction permettant de créer la liste des clubs rangée par ordre décroissant de score puis de buts en cas
         d'égalité des scores.
@@ -200,3 +208,20 @@ class Championnat():
         """
         for c in self.clubs:
             c.fiche_club(final)
+
+    def analyse(self):
+        for c in self.clubs:
+            for j in c:
+                if j.poste == "Gardien":
+                    j.calcul_efficacite()
+                    if j.efficacite > self.donnees_analyse[0][1]:
+                        self.donnees_analyse[0] = [j, j.efficacite]  # On enregistre le gardien le plus efficace
+                elif j.poste == "Attaquant":
+                    j.calcul_efficacite()
+                    if j.efficacite > self.donnees_analyse[1][1]:
+                        self.donnees_analyse[1] = [j, j.efficacite]  # On enregistre l'attaquant le plus efficace
+            if c.attaques_reussies > self.donnees_analyse[2][1]:
+                self.donnees_analyse[2] = [c, c.attaques_reussies]
+            if c.defenses_reussies > self.donnees_analyse[3][1]:
+                self.donnees_analyse[3] = [c, c.defenses_reussies]
+        print(self.donnees_analyse)

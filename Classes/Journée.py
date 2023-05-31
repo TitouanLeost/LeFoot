@@ -7,8 +7,8 @@ class Journee():
     def __init__(self, num, championnat):
         self.num = num
         self.matchs = []
-        self.clubs_complet = championnat.clubs.copy()  # liste contenant tous les clubs participant au championnat
-        self.clubs = championnat.clubs.copy()  # Liste contenant les clubs n'ayant pas encore joué sur la journée
+        self.clubs_complet = championnat.liste_clubs.copy()  # liste contenant tous les clubs participant au championnat
+        self.clubs = championnat.liste_clubs.copy()  # Liste contenant les clubs n'ayant pas encore joué sur la journée
         self.joueurs_cartons = []  # Liste contenant les joueurs ayant reçu un carton lors d'un match
         self.joueurs_blessures = []  # Liste contenant les joueurs s'étant blessé lors d'un match
 
@@ -71,9 +71,9 @@ class Journee():
                      'wt')
 
         # On affiche les notes des équipes juste pour vérifier (Debug).
-        c1.calcul_note_club()
-        c2.calcul_note_club()
-        diff_note = c1.note_club - c2.note_club  # On calcule l'écart de note entre les équipes
+        c1.calcul_note_equipe()
+        c2.calcul_note_equipe()
+        diff_note = c1.note_equipe - c2.note_equipe  # On calcule l'écart de note entre les équipes
         print(diff_note)  # Debug
         # On détermine le nb d'actions qu'auront chaques clubs en fonction de tirages aléatoires, de la différence
         # et du caractère à domicile ou à l'extérieur de la rencontre.
@@ -117,6 +117,7 @@ class Journee():
                 if but == 1:
                     but_c1 += 1  # On met à jour le nombre de buts de c1 dans ce match
                     c1.nb_buts += 1  # On met à jour le nombre de buts totaux de c1 dans le championnat
+                    c2.nb_buts_encaisses += 1  # On met à jour le nombre de buts encaissés par c2
                     liste_buteurs.append([joueur, temps])
                 elif but == 0:
                     liste_arrets.append([joueur, temps])
@@ -126,6 +127,7 @@ class Journee():
                 if but == 1:
                     but_c2 += 1  # On met à jour le nombre de buts de c2 dans ce match
                     c2.nb_buts += 1  # On met à jour le nombre de buts totaux de c2 dans le championnat
+                    c1.nb_buts_encaisses += 1  # On met à jour le nombre de buts encaissés par c1
                     liste_buteurs.append([joueur, temps])
                 elif but == 0:
                     liste_arrets.append([joueur, temps])
@@ -158,6 +160,9 @@ class Journee():
             print("----------------------------------------------------------------------------")
             f.write(f"<font color={c1.couleur}><b>{c1}</b></font> et <font color={c2.couleur}><b>{c2}</b></font> "
                     f"font un match nul avec <b>{but_c1}</b> partout")
+        # Mise à jour de la liste des scores
+        c1.liste_score.append(c1.score)
+        c2.liste_score.append(c2.score)
 
         f.close()
 
@@ -242,6 +247,7 @@ class Journee():
         if puis_att > puis_def:
             print(f"=> {c1} perce la défense de {c2}")
             f.write(f"=> <b>{c1}</b> perce la défense de <b>{c2}</b><br>")
+            c1.attaques_reussies += 1
             # On choisit un joueur au hasard pour effectuer le tir final.
             i = rd.randint(0, len(c1.equipe)-1)
             j = c1.equipe[i]
@@ -254,6 +260,8 @@ class Journee():
             # que de la ferveur des supporters (domicile/extérieur).
             note_frappe = j.note * rd.random() + dom_c1 * 10
             note_arret = gardien.note * rd.random() + dom_c2 * 10
+            j.nb_tirs += 1
+            gardien.tentatives_arrets += 1
             # Affichage des notes (debug).
             print("note_frappe :", note_frappe)
             print("note_arret :", note_arret)
@@ -283,18 +291,19 @@ class Journee():
             print("- - - - - - - -")
             f.write(f"===> <b>La défense de {c2} parvient à repousser l'offensive de {c1}</b><br>")
             f.write("<br>")
+            c2.defenses_reussies += 1
             return 2, 0, 0
 
     def score_journee(self):
         """
-        Fonction affichant le score de l'équipe sur une journée.
+        Méthode affichant le score de l'équipe sur une journée.
         """
         for c in self.clubs_complet:
             print(f"{c} termine la journée {self.num} avec un score de {c.score}")
 
     def deroulement(self):
         """
-        Fonction simulant le déroulement d'une journée
+        Méthode simulant le déroulement d'une journée.
         """
         while len(self.clubs) > 0:
             self.match()
@@ -318,8 +327,7 @@ class Journee():
         but_c1 : Nombre de buts de c1.
         but_c2 : Nombre de buts de c2.
         """
-        # f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {self.num}, match {c1.nom}-{c2.nom}.txt", 'wt') # titouan
-        f = open(f"C:\\Users\\BDD\\Journée {self.num}, match {c1.nom}-{c2.nom}.txt", 'wt')  # Hadrien
+        f = open(f"C:\WorkspacePython\LeFoot\Fichiers\\Journée {self.num}, match {c1.nom}-{c2.nom}.txt", 'wt')
         # Affichage des buteurs.
         f.write("BUTEURS :\n")
         for i in range(len(liste_buteurs)):
