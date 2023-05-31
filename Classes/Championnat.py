@@ -255,6 +255,6 @@ class Championnat():
             # On enregistre le clubs ayant la défense la plus efficace.
             if c.defenses_reussies > self.donnees_analyse[3][1]:
                 self.donnees_analyse[3] = [c, c.defenses_reussies]
-            # On enregistre le nombre de cartons obtenus chaques clubs.
+            # On enregistre le nombre de cartons obtenus par chaque club.
             self.donnees_analyse[4].append(c.nb_cartons)
         print(self.donnees_analyse)  # Debug
