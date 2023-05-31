@@ -1,13 +1,13 @@
 import sys
 import Club
 import Championnat
-from Creation_BDD import creation_bdd, copie_bdd
+from Creation_BDD import creation_bdd
 
-from PyQt5.QtCore import QSize, Qt, QTimer, QSettings
+from PyQt5.QtCore import QSize, Qt, QSettings
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QPushButton, QComboBox, QVBoxLayout, QHBoxLayout, QGridLayout,
                              QStackedLayout, QWidget, QLabel, QTabWidget, QStackedWidget, QScrollArea, QDialog,
                              QLineEdit)
-from PyQt5.QtGui import QPixmap, QImage
+
 import pyqtgraph as pg
 import numpy as np
 
