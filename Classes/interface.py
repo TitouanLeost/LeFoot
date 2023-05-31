@@ -636,6 +636,9 @@ class Chargement(QMainWindow):
 
 
 class CustomDialog(QDialog):
+    """
+    Classe créant une fenêtre de dialogue qui met en pause l'exécution du reste du programme.
+    """
     def __init__(self):
         super().__init__()
 
@@ -643,19 +646,26 @@ class CustomDialog(QDialog):
         layout = QVBoxLayout()
         btn_layout = QHBoxLayout()
 
+        # Affichage du texte de la boîte de dialogue
         texte = "Si c'est le premier lancement, ou que vous voulez changer de joueur dans les équipes," \
                 "cliquez sur 'Nouveau'\n Sinon, cliquez sur 'Relancer'"
         layout.addWidget(QLabel(texte))
         layout.addLayout(btn_layout)
 
+        # Création des boutons
         btn = QPushButton("Nouveau")
         btn.clicked.connect(window.nouveau)
+        btn.clicked.connect(self.fermer)
         btn_layout.addWidget(btn)
         btn = QPushButton("Relancer")
         btn.clicked.connect(window.relancer)
+        btn.clicked.connect(self.fermer)
         btn_layout.addWidget(btn)
 
-        self.setLayout(layout)
+        self.setLayout(layout)  # Application du layout
+
+    def fermer(self):
+        self.close()
 
 
 app = QApplication(sys.argv)
