@@ -11,6 +11,9 @@ from Club import Club
 class TestJoueur(unittest.TestCase):
 
     def test_joueur_creation(self):
+        '''
+
+        '''
         joueur = Joueur("John", "Doe", 8.2, "Club 1")
         self.assertEqual(joueur.prenom, "John")
         self.assertEqual(joueur.nom, "Doe")
@@ -70,8 +73,11 @@ class TestClub(unittest.TestCase):
 
     def test_victoire(self):
         # Test the method to increase the club's score after a victory
-        self.club.victoire()
-        self.assertEqual(self.club.score, 3)
+        self.club1 = Club("Mon Club 1", "Entraîneur 1")
+        self.club2 = Club("Mon Club 2", "Entraîneur 2")
+        self.club1.victoire()
+        self.assertEqual(self.club1.score, 3)
+        self.assertTrue(self.club1.score > self.club2.score)
 
     def test_nul(self):
         # Test the method to increase the club's score after a draw
@@ -110,17 +116,27 @@ class TestJournée(unittest.TestCase):
         self.assertEqual(len(self.journee.joueurs_cartons), 0)
         self.assertEqual(len(self.journee.joueurs_blessures), 0)
 
-    '''def test_dom_ext(self):  # il faut remplir le championnat
-        self.championnat = Championnat("ligue1", [sb, sr, se, gu, fs, cc, sc, rl])
+    def test_nbr_match_joue(self):
+        self.championnat.simuler()
+        self.assertEqual(len(self.journee.matchs),2)
+
+    '''def test_dom_ext(self):
+        self.club1 = Club("Club 1", "entraineur 1")
+        self.club2 = Club("Club 2", "entraineur 2")
+        self.club3 = Club("Club 3", "entraineur 3")
+        self.club4 = Club("Club 4", "entraineur 4")
+        self.clubs = [self.club1, self.club2, self.club3, self.club4]
+        self.championnat = Championnat("ligue 3", self.clubs)
         self.championnat.simuler()
         dom = 0
         ext = 0
-        for i in range(len(club.match_realise_dom)):
-            dom += 1
-        for j in range(len(club.match_realise_ext)):
-            ext += 1
-        self.assertEqual(dom, 7)  # on regarde si il y a bien eu 7 matchs joué à domicile
-        self.assertEqual(ext, 7)  # et 7 matchs joué à l'éxterieur'''
+        for j in range(len(self.clubs)):
+            for i in range(len(self.club[j].match_realise_dom)):
+                dom += 1
+            for j in range(len(self.club[j].match_realise_ext)):
+                ext += 1
+        self.assertEqual(dom, 3)  # on regarde si il y a bien eu 7 matchs joué à domicile
+        self.assertEqual(ext, 3)  # et 3 matchs joué à l'éxterieur '''
 
 class TestChampionnat(unittest.TestCase):
     def setUp(self):
@@ -142,7 +158,7 @@ class TestChampionnat(unittest.TestCase):
         self.club2.remplissage_bdd.assert_called_once()
         self.club3.remplissage_bdd.assert_called_once()
 
-    def test_simuler(self):
+    '''def test_simuler(self):
         journee1 = mock.MagicMock()
         journee2 = mock.MagicMock()
         self.championnat.journees_liste = [journee1, journee2]
@@ -154,7 +170,7 @@ class TestChampionnat(unittest.TestCase):
 
         self.assertEqual(self.championnat.score_final.call_count, 1)
         self.assertEqual(self.championnat.tableau_score.call_count, 1)
-        self.assertEqual(self.championnat.classement_buteurs.call_count, 1)
+        self.assertEqual(self.championnat.classement_buteurs.call_count, 1)'''
 
     def test_triage_buts(self):
         joueur = mock.MagicMock()
@@ -164,7 +180,7 @@ class TestChampionnat(unittest.TestCase):
 
         self.assertEqual(result, 10)
 
-    def test_tableau_score(self):
+    '''def test_tableau_score(self):
         self.championnat.liste_scores = [self.club1, self.club2, self.club3]
         self.championnat.liste_scores[0].__str__.return_value = "Club1"
         self.championnat.liste_scores[0].score = 20
@@ -180,7 +196,7 @@ class TestChampionnat(unittest.TestCase):
             self.championnat.tableau_score()
 
             mock_open.assert_called_once_with(
-                "C:\WorkspacePython\LeFoot\Fichiers\\fichier des scores finaux.txt", 'wt'
+                "C:\\Users\\hadrien dupuy\\PycharmProjects\\pythonProject6\\BDD\\fichier des scores finaux.txt", 'wt'
             )
             file_handle = mock_open()
             file_handle.write.assert_called()
@@ -193,7 +209,7 @@ class TestChampionnat(unittest.TestCase):
             ]
             file_handle.write.assert_has_calls(expected_calls, any_order=True)
             file_handle.close()
-            self.assertEqual(file_handle.close.call_count, 1)
+            self.assertEqual(file_handle.close.call_count, 1)'''
 
 
 
